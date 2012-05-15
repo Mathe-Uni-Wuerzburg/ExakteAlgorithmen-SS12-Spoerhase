@@ -10,7 +10,12 @@
     Sei \(\alpha \leq 1/2\). Dann gilt \[ \sum_{i=0}^{\alpha \cdot n} \binom{n}{i} = O^*( 2^{h(\alpha) \cdot n} ), \] wobei \(h(\alpha) = - \alpha \log_2 \alpha - (1-\alpha) \log_2(1 - \alpha)\).
   \end{lemma}
   
-  \TODO{Bild 1: Entropiekurve}
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=.25\textwidth]{./Bilder/b01.jpg}
+    % b01.jpg: 495x434 pixel, 72dpi, 17.46x15.31 cm, bb=0 0 495 434
+    \caption{Graph des Binomialkoeffizienten}
+  \end{figure}
   
   \begin{proof}
     Es ist \( \sum_{i=0}^{\alpha n} \leq n \binom{n}{\alpha n} = O^*( \binom{n}{\alpha n} ) \), denn die Binomialkoeffizienten \( \binom{a}{b} \) steigen für \(b \leq n/2\) monoton an. Per Definition gilt 
@@ -34,7 +39,12 @@
     Falls \(|I| \leq \alpha n\), testen wir in \(O^*(2^{h(\alpha) n})\) alle Teilmengen \(D \subseteq V\) mit \(|D| \leq |I|\).
     Falls \(|I| > \alpha n\), wende Satz \ref{satz??} an und berechne kleinste dominierende Menge in \(O^*(2^{(1-\alpha)n})\). % Satz in dem O*(2^(n-|I|)) bewiesen wurde
     
-    \TODO{Bild 2}
+    \begin{figure}[h]
+      \centering
+      \includegraphics[width=.25\textwidth]{./Bilder/b02.jpg}
+      % b02.jpg: 442x604 pixel, 72dpi, 15.59x21.31 cm, bb=0 0 442 604
+      \caption{Bestimmung von \(\alpha^*\) als Maximum der zwei möglichen Funktionen}
+    \end{figure}
     
     Aus der Skizze ergibt sich die Laufzeit als das Maximum der beiden dargestellten Funktionen bei \(\alpha^* \leq 0,22711\) bzw. \(O(2^{0,7729n}) = O(1,7088^n)\).
   \end{proof}
