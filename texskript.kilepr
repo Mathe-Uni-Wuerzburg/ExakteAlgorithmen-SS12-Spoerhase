@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.1.0
-lastDocument=02-dynamisches-programmieren.tex
+lastDocument=03-inklusion-exklusion.tex
 masterDocument=
 name=Exakte Algorithmen
 pkg_extIsRegExp=false
@@ -81,18 +81,18 @@ encoding=UTF-8
 highlight=LaTeX
 line=45
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [item:03-inklusion-exklusion.tex]
 archive=true
-column=54
+column=289
 encoding=UTF-8
 highlight=LaTeX
-line=4
+line=69
 mode=LaTeX
-open=false
-order=-1
+open=true
+order=0
 
 [item:Bilder/b01.jpg]
 archive=true
@@ -116,7 +116,7 @@ order=-1
 
 [item:main.tex]
 archive=true
-column=26
+column=0
 encoding=UTF-8
 highlight=LaTeX
 line=15
@@ -173,11 +173,11 @@ CursorColumn=85
 CursorLine=45
 
 [view-settings,view=0,item:03-inklusion-exklusion.tex]
-CursorColumn=54
-CursorLine=4
+CursorColumn=289
+CursorLine=69
 
 [view-settings,view=0,item:main.tex]
-CursorColumn=26
+CursorColumn=0
 CursorLine=15
 
 [view-settings,view=0,item:packages.tex]
