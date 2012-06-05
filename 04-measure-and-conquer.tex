@@ -1,0 +1,24 @@
+\chapter{Measure \& Conquer}
+
+  Measure and Conquer bezeichnet ein Verfahren, um Rekursonsgleichungen wie beispielsweise \(T(n) \leq T(n-1) + T(n-5)\) zu lösen. Ein Algorithmus für unabhängige Mengen ist
+
+  \begin{algorithm}[H]
+    \caption{Algorithmus zur Berechnung der größten Anzahl unabhängiger Mengen}
+  
+    \KwName{MIS} \\
+    \KwData{Graph \(G\)}
+    \KwResult{Größte Anzahl von unabhängigen Mengen}
+
+    \uIf{ex. \(v\) mit \(d(v) =0\)}{
+      \Return 1 + MIS(\(G-v\))
+    }\uElseIf{ex. \(v\) mit \(d(v) =1\)}{
+      \Return 1 + MIS(\(G-N[v]\))
+    }\uElseIf{ \(\Delta(G) \geq 3\) } {
+      wähle \(v\) mit \(d(v) \geq 3\) \\
+      \Return \(\max \{ 1 + \text{MIS}(G - N[v]), \text{MIS}(G-v) \}\) 
+    }\ElseIf{ \(\Delta(G) \leq 2\) } {
+      löse diesen Spezialfall effizient
+    }
+  \end{algorithm}
+
+  In Fall 3 handelt es sich um Branching, die Laufzeit wird hier durch die Rekursonsgleichung \(T(n) \leq T(n-1) + T(n-4)\) beschrieben. Die Standardanalyse liefert eine Abschätzung von \(O(1,3803^n)\). Diese Analyse kann durch die Methode Measure \& Conquer verbessert werden.

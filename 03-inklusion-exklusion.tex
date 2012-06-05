@@ -65,10 +65,41 @@
   \begin{lemma}
    Die Anzahl der geordneten \(k\)-Cover beträgt \(c_k = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k\).
   \end{lemma}
+
+  \marginpar{5.6.12}
   
   \begin{proof}
-    Wir betrachten die \(k\)-Tupel \( (S_1, ..., S_k) \) als Objekte und für \(v \in U\) den Ausdruck \(v \in \bigcup_{i=1}^k S_i\) als Eigenschaft. Es ist damit \( \overline{N}[W] = s[W]^k\). Satz \ref{satzInklSumme} liefert dann \[c_k = N[U] = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k.\]
+    Wir betrachten die \(k\)-Tupel \( (S_1, ..., S_k) \) als Objekte und für \(v \in U\) den Ausdruck \(v \in \bigcup_{i=1}^k S_i\) als Eigenschaft, und wenden darauf die Inklusions- / Exklusionsformel an. Die Eigenschaft \(v \in U\) für ein \(k\)-Tupel gilt also nicht, wenn \(v \notin \cup_{i=1}^k S_i\). Ist ein \(W \subseteq U\) gegeben, so gelten alle Eigenschaften aus \(W\) nicht, wenn für alle \(v \in W\) stets \(v \notin \bigcup_i S_i\) gilt. Anders formuliert, muss für alle \(i\) der Schnitt \(S_i \cap W = \emptyset\) sein. Da es genau \(s[W]\) Mengen gibt, die \(W\) vermeinden, gibt es \(s[W]^k\) Möglichkeiten, ein \(k\)-Tupel aus Mengen zu bilden, die \(W\) vermeiden. Es ist damit \( \overline{N}[W] = s[W]^k\). Satz \ref{satzInklSumme} liefert dann \[c_k = N[U] = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k\] als Anzahl der Tupel, für die alle Eigenschaften \(v \in U\) gelten. Dies ist die Anzahl der Tupel, in denen für jedes \(v \in U\) gilt dass \(v \in \bigcup_i S_i\) ist.
   \end{proof}
+
+  \begin{theorem}
+    Die Anzahl \(c_k\) aller \(k\)-Cover kann in \(O^*(2^n)\) berechnet werden.
+  \end{theorem}
+
+  \begin{proof}
+    Es ist \(c_k = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k\). Zum Auswerten der Formel müssen alle Teilmengen \(W \subseteq U\) aufgezählt und jeweils \(s[W]\) berechnet werden. Dazu ordnen wir die Elemente von \(U\) durch \(U = \{u_1,...,u_n\}\) beliebig. Dann sei für alle \(W \subseteq U\)
+    \[ g_i(W) = | \{ S_i \in S[W] : \{ u_1, ..., u_i \} \setminus W \subseteq S_i \} |. \]
+    Dies ist die Anzahl der Mengen, die \(W\) vermeiden, und alle Elemente \(\{ u_1, ..., u_i \} \setminus W\) enthält.
+    Mit dieser Definition gilt \(s[W] = g_0(W)\), denn \(g_0(W) = | \{ S_i \in S[W] : \emptyset \subseteq S \} | = | S[W] |\). Wir verwenden ein dynamisches Programm, das über \(i = n, ..., 0\) iteriert und zunächst
+    \[
+       g_n(W) =
+       \begin{cases}
+          1 & (U \setminus W \in S) \\
+          0 & (\text{sonst})
+       \end{cases}
+    \]
+    berechnet. Für \(0 \leq i < n\) ist dann
+    \[
+      g_{i-1}(W) =
+      \begin{cases}
+         g_i(W) & (u_i \in W), \\
+         g_i(W \cup \{ u_i \}) + g_i(W) & (u_i \notin W).
+      \end{cases}
+    \]
+    Im Fall \(u_i \in W\) ändert sich durch den Ausschluss von \(W\) in der Definition von \(g_i\) nichts an der Bedingung, daher bleibt die Anzahl gleich. Im anderen Fall können zwei Fälle eintreten, deren Möglichkeiten addiert werden. \(g_i(W \cup \{ u_i \})\) erfasst die Elemente, die \(u_i\) vermeiden, während \(g_i(W)\) die Möglichkeiten enthält, die \(u_i\) enthalten. Für jede Menge \(W \subseteq S\) wird der Ausdruck \(g_i(W)\) \(n\)-mal ausgewertet, daher beträgt die Laufzeit \(O^*(2^n)\). Der Speicherverbrauch liegt bei \(O(2^n)\), wenn man zu jeder Zeit immer nur die vorhergehende Zeile in der dynamischen Tabelle speichert. Somit kann die Formel mit Hilfe von diesem Algorithmus in \(O(2^n)\) Speicher und Zeit ausgewertet werden.
+  \end{proof}
+
+
 
 
 
