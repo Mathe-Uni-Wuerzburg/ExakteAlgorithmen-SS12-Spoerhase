@@ -22,3 +22,69 @@
   \end{algorithm}
 
   In Fall 3 handelt es sich um Branching, die Laufzeit wird hier durch die Rekursonsgleichung \(T(n) \leq T(n-1) + T(n-4)\) beschrieben. Die Standardanalyse liefert eine Abschätzung von \(O(1,3803^n)\). Diese Analyse kann durch die Methode Measure \& Conquer verbessert werden.
+
+  \paragraph*{Dominating Set.} Wir betrachten nun einen Algorithmus für Dominating Set, der bei konventioneller Analyse Laufzeit \(O(1,9052^n)\), bei Analyse mit Measure \& Conquer jedoch \(O(1,5259^n)\) ergibt. Dazu modellieren wir Dominating Set als Set Cover-Instanz, wobei \(U = V\) und \(S = \{ N[v] : v \in V \}\) ist. Die Größe dieser Set Cover-Instanz ist dann \(|U| + |S| = n + n = 2n\). Wir entwickeln daher einen Algorithmus für Set Cover mit \(O^*(c^{|U|+|S|})\) und \(c \ll 2\).
+
+  Wir nehmen ohne Einschränkung an, dass \(U = \bigcup_{S_i \in S} S_i\). Damit ist eine Set Cover-Instanz durch \(S\) spezifiziert. Die \defNotion{Häufigkeit} eines Elements \(u \in U\) sei definiert als die Anzahl der Mengen aus \(S\), die \(u\) enthalten.
+
+  \begin{algorithm}[H]
+    \caption{Algorithmus für Set Cover}
+
+    \KwName{SC} \\
+    \KwData{Set Cover-Instanz \(S\)}
+    \KwResult{}
+
+    \uIf{(1) \(|S| = 0\)}{
+      \Return 0
+    }\uElseIf{(2) es existieren \(S_1, S_2 \in S\) mit \(S_1 \subseteq S_2\)}{
+      \Return SC(\(S - S_1\))
+    }\ElseIf{(3) es existiert \(u \in U(S)\) mit Häufigkeit 1, d.h. liegt in genau einem \(S^* \in S\) } {
+      \Return 1 + SC(del(\(S^*, S\)))
+    }
+    wähle Menge \(S' \in S\) mit maximaler Kardinalität \;
+    \uIf{(4) \(|S'| = 2\) }{
+      löse in Polynomialzeit (vgl. Übungsaufgabe) \;
+    }\ElseIf{ \(|S| \geq 3 \) } {
+      \(S_{in} = S - S^*\)\;
+      \(S_{out} = \text{del}(S, S^*)\)\;
+      \Return \(\min\{ \text{SC}(S_{in}), 1 + \text{SC}(S_{out}) \}\)
+    }
+  \end{algorithm}
+
+  Dabei ist \(\text{del}(A,S) = \{ T : T = R \setminus A \neq \emptyset, R \in S \}\).
+
+  Für die konventionelle Analyse sei \(k'(S) = |S| + |U(S)|\). Wir können aufgrund des Algorithmus die Rekursionsungleichung
+  \[ T(k') \leq T(k' - 1) + T(k' - 4) \]
+  herleiten. Die übliche Lösungsmethode ergibt \(T(k') = O(1,3803^{k'})\). Damit ergibt sich als Laufzeit für Dominating Set \(O(1,3803^{2n}) = O(1,9052^n)\).
+
+  Für die Analyse mittels Measure \& Konquer definiert man \(n_i\) als Anzahl der Mengen mit Kardinalität \(i\) und \(m_j\) als Anzahl der Elemente mit Häufigkeit \(j\). Das Maß sei
+  \[ k(S_i) = \underbrace{ \sum_{i \geq 1} w_in_i }_{k_w(S_i)} + \sum_{j \geq 1} v_jm_j \]
+  mit Gewichten \(w_i, v_j \in [0,1]\). Damit ist \(k(S_i) \leq |U| + |S|\). Vereinfachend nehmen wir für die Gewichte an, dass
+  \begin{enumerate}[(a)]
+   \item \(w_i \leq w_{i+1}, v_i \leq v_{i+1}\),
+   \item \(w_1 = v_1 = 0\),
+   \item \(w_1 = v_1 = 1\) für \(i \geq 6\),
+   \item \(\Delta w_i \geq \Delta w_{i+1}\) mit \(\Delta w_i := w_i - w_{i-1}\) und \(\Delta v_i\) analog.
+  \end{enumerate}
+  Wir bestimmen den Branching-Vektor \( (\Delta k_{out}, \Delta k_{in}) \) in Abhängigkeit der \(w_i\) und \(v_i\).
+  \begin{enumerate}[(1)]
+   \item Im Fall, dass \(S_i\) nicht gewählt wird, verändert sich \(\Delta k_{out}\) wie folgt.
+          \begin{enumerate}[(i)]
+            \item Durch Wegfallen von \(S_i\) wird \(k_w(S)\) umd \(w_{|S_i|}\) reduziert.
+            \item Sei \(r_i\) definiert als Anzahl der Elemente von \(S_i\) mit Häufigkeit \(i\). Die Reduktion von \(k_v(S)\) ist dann kleiner oder gleich \(\sum_{i=2}^6 r_i \Delta v_i\).
+            \item Angenommen \(r_2 > 0\). Seien \(R_1, ..., R_h\), \(h \leq r_2\) die Mengen ungleich \(S_i\), die mindestens ein Element der Häufigkeit 2 mit \(S_i\) teilen. Die Mengen \(R_i\) werden nachfolgend durch Regel (3) reduziert. Sei dazu \(v_{2,i}\) die Anzahl solcher Elemente in \(R_i\). Dann ist \(|R_i| \geq v_{2,i}+1\) und \(|S_i| \geq v_{2,i} + 1\). Die Reduktion von \(k_w(S)\) durch Wählen von \(R_i\) ist dann mindestens \(W_{v_{2,i}+1}\). Damit existiert mindestens ein Element, das nicht in \(S_i\) liegt und aus der Instanz entfernt wird. Also wird \(k_v(S)\) mindestens um \(v_2\) reduziert.
+          \end{enumerate}
+          Wir erhalten eine Reduktions von mindestens
+          \[
+           \Delta k' =
+           \begin{cases}
+             0 & (r_2 = 0), \\
+             v_2 + w_2 & (r_2 = 1), \\
+             v_2 + w_2 + w_3 & (r_2 = 2), \\
+             v_2 + w_4 & (r_2 \geq 3, |S_i| = 3),
+           \end{cases}
+          \]
+
+  \end{enumerate}
+
+
