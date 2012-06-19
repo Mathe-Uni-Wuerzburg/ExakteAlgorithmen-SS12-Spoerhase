@@ -70,8 +70,8 @@
   \begin{enumerate}[(1)]
    \item Im Fall, dass \(S_i\) nicht gewählt wird, verändert sich \(\Delta k_{out}\) wie folgt.
           \begin{enumerate}[(i)]
-            \item Durch Wegfallen von \(S_i\) wird \(k_w(S)\) umd \(w_{|S_i|}\) reduziert.
-            \item Sei \(r_i\) definiert als Anzahl der Elemente von \(S_i\) mit Häufigkeit \(i\). Die Reduktion von \(k_v(S)\) ist dann kleiner oder gleich \(\sum_{i=2}^6 r_i \Delta v_i\).
+            \item Durch Wegfallen von \(S_i\) wird \(k_w(S)\) um \(w_{|S_i|}\) reduziert.
+            \item Sei \(r_j\) definiert als Anzahl der Elemente von \(S_i\) mit Häufigkeit \(j\). Die Reduktion von \(k_v(S)\) ist dann kleiner oder gleich \(\sum_{i=2}^6 r_i \Delta v_i\).
             \item Angenommen \(r_2 > 0\). Seien \(R_1, ..., R_h\), \(h \leq r_2\) die Mengen ungleich \(S_i\), die mindestens ein Element der Häufigkeit 2 mit \(S_i\) teilen. Die Mengen \(R_i\) werden nachfolgend durch Regel (3) reduziert. Sei dazu \(v_{2,i}\) die Anzahl solcher Elemente in \(R_i\). Dann ist \(|R_i| \geq v_{2,i}+1\) und \(|S_i| \geq v_{2,i} + 1\). Die Reduktion von \(k_w(S)\) durch Wählen von \(R_i\) ist dann mindestens \(W_{v_{2,i}+1}\). Damit existiert mindestens ein Element, das nicht in \(S_i\) liegt und aus der Instanz entfernt wird. Also wird \(k_v(S)\) mindestens um \(v_2\) reduziert.
           \end{enumerate}
           Wir erhalten eine Reduktions von mindestens
@@ -84,7 +84,31 @@
              v_2 + w_4 & (r_2 \geq 3, |S_i| = 3),
            \end{cases}
           \]
-
+          Demnach ist in diesem Fall \(\Delta k_{out} = w_{|S_i|} + \sum_{i=2}^6 r_i \Delta v_i + \Delta k'\).
+   \item Im Fall, dass \(S_i\) gewählt wird,
+          \begin{enumerate}[(i)]
+           \item wird \(k_w(S)\) durch Wegfall von \(S_i\) um \(w_{|S_i|}\) reduziert,
+           \item wird \(k_v(S)\) durch Wegfall von \(S_i\) um \(\sum_{i=2}^6 r_iv_i + r_{\geq 7}\) reduziert,
+           \item wird \(k_w(S)\) durch die Verkleinerung der Kardinalität derjenigen Mengen, die \(S_i\) schneiden, reduziert. Sei \(R\) eine solche Menge, d.h. \(R \cap S \neq \emptyset\). Sei \(u\) also ein Element aus \(R \cap S\), dann ist der Beitrag von \(u\) zur Verkleinerung der Kardinalität größer oder gleich \(\Delta w_{|R|} \geq \Delta w_{|S_i|}\). Damit beträgt die gesamte Reduktion für diesen Beitrag mindestens \[ \Delta w_{|S_i|} \left( \sum_{i=2}^6 (i-1)r_i + 6 \cdot r_{\geq 7} \right). \]
+          \end{enumerate}
+         Für den Fall, dass \(S_i\) gewählt wird beträgt die Gesamtreduktion also mindestens
+         \[
+           \Delta k_{in} = w_{|S_i|} + \sum_{i=2}^6 r_iv_i + r_{\geq 7} + \Delta w_{|S_i|} \left( \sum_{i=2}^6 (i-1)r_i + 6 \cdot r_{\geq 7} \right).
+         \]
   \end{enumerate}
+
+  Sei nun für feste \( (w,v) := (w_1,...,w_6,v_1,...,v_6)\) und \(|S| \geq 3\) und \((r_i)_i\) mit \(\sum_{i=2}^6 r_i + r_{\geq 7} = |S|\) die Rekurenz \(T(k) \leq T(k-\Delta k_{out}) + T(k - \Delta k_{in})\) definiert.
+
+  Wir beobachten, dass wir für jeden Branchingvektor mit \(|S_i| \geq 7\) einen Branchingvektor mit \(|S_i| = 7\) finden, der diesen dominiert. Dies folgt aus den Formeln für \(\Delta k_{in}\) und \(\Delta k_{out}\) zusammen mit der Tatsache, dass \(\Delta w_{|S_i|} = 0\) für \(|S_i| \geq 7\). Wir nehmen daher an, dass \(3 \leq |S_i| \leq 7\) und damit ist die Anzahl der gültigen Belegungen für \(|S_i|\) und \((r_i)_i\) endlich. Also ist für jedes feste \((w,v)\) die Laufzeit beschränkt durch \(\alpha(w,v)^k\), wobei \(\alpha(w,v)\) die größte der Nullstellen der Gleichungen \(x^t - x^{t-\Delta k_{out}} - x^{t - \Delta k_{in}} = 0\) für \(t := \max \{ \Delta k_{in}, \Delta k_{out} \}\) über alle Belegungen für \(|S_i|,(r_i)_i\). Für jedes \((w,v)\) erhalten wir so eine Laufzeitschranke \(\alpha(w,v)^k\). Wir wollen nun ein \((w,v)\) finden, sodass \(\alpha(w,v)\) möglichst klein ist. Mit Methoden der quasi-konvexen Optimierung lässt sich eine Näherunglösung finden, diese liefert \(\alpha(w_0,v_0) < 1,2353\).
+
+  \begin{theorem}
+    Set-Cover lässt sich in \(O(1,2353^{|U|+|S|})\) lösen.
+  \end{theorem}
+
+  \begin{corollary}
+    Dominating-Set lässt sich in \(O(1,5259^n)\) lösen.
+  \end{corollary}
+
+
 
 
