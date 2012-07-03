@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.1.0
-lastDocument=03-inklusion-exklusion.tex
+lastDocument=04-measure-and-conquer.tex
 masterDocument=
 name=Exakte Algorithmen
 pkg_extIsRegExp=false
@@ -104,13 +104,13 @@ order=0
 
 [item:04-measure-and-conquer.tex]
 archive=true
-column=27
+column=55
 encoding=UTF-8
 highlight=LaTeX
-line=80
+line=108
 mode=LaTeX
 open=false
-order=-1
+order=0
 
 [item:Bilder/b01.jpg]
 archive=true
@@ -195,8 +195,8 @@ CursorColumn=289
 CursorLine=69
 
 [view-settings,view=0,item:04-measure-and-conquer.tex]
-CursorColumn=27
-CursorLine=80
+CursorColumn=55
+CursorLine=108
 
 [view-settings,view=0,item:main.tex]
 CursorColumn=34

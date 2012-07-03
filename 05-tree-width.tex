@@ -1,0 +1,98 @@
+\chapter{Tree width}
+
+  \marginpar{3.7.12}
+  
+  Zunächst betrachten wir Vertex Cover auf Bäumen. Dazu berechnen wir, beginnend bei den Blättern, für jeden Teilbaum mit Wurzel \(v\) ein ein maximales Vertex Cover, in dem \(v\) enthalten ist, und ein Vertex Cover, in dem die Teilbaum-Wurzel \(v\) nicht enthalten ist. Wir speichern die Ergebnisse der Berechnung in den Tabellen \(IN(v)\) bzw. \(OUT(v)\) für Teilbäume mit Wurzel \(v\), in denen \(v\) enthalten bzw. nicht enthalten ist.
+
+  Zur Berechnung von \(OUT(v)\) für einen beliebigen Knoten \(v\) berechnen wir (in binären Bäumen) \(IN(v_1) + IN(v_2)\) der beiden Kind-Knoten \(v_1\) und \(v_2\) von \(v\). Wir müssen \(v_1\) und \(v_2\) in das Vertex Cover aufnehmen, da die Kanten \((vv_1)\) und \((vv_2)\) gecovert werden müssen.
+
+  Zur Berechnung von \(IN(v)\) berechnen wir \(\max \{ IN(v_1), OUT(v_2) \} + \max \{ IN(v_2), OUT(v_2) \}\), da die Kanten \((vv_1)\) und \((vv_2)\) bereits durch \(v\) gecovert sind und wir daher die Wahl haben, ob wir \(v_1\) bzw. \(v_2\) in das Vertex Cover aufnehmen.
+
+  Diese Berechnung kann in \(O(\deg v)\) Zeit durchgeführt werden, wenn die Werte \(IN(v_1), ..., IN(v_{\deg v})\) und \(OUT(v_1), ..., OUT(v_{\deg v})\) bereits bekannt sind. Für alle Knoten ausgeführt, erhält man \(O(n)\), denn die Anzahl von Kanten im Baum beträgt \(n-1\).
+
+  Sei \(G = (V,E)\) ein Graph. Eine \defNotion{tree decomposition} von \(G\) ist ein Paar \(\tdc{T} = ( \{ X_i : i \in I \}, T )\), wobei jedes \(X_i\) Teilmengen von \(V\) sind, die man \defNotion{bags} nennt, und \(T\) ein Baum mit der Knotenmenge \(I\) ist. Außerdem müssen noch weitere Eigenschaften gelten:
+  \begin{enumerate}[(i)]
+   \item Es gilt \(\bigcup_{i \in I} X_i = V\).
+   \item Für jede Kante \((uv) \in E\) gibt es ein \(i \in I\) mit \(\{u,v\} \subseteq X_i\).
+   \item Für alle \(i,j,k \in I\) so dass \(j\) auf einem Pfad zwischen \(i\) und \(k\) in \(T\) liegt, gilt \(X_i \cap X_k \subseteq X_j\).
+  \end{enumerate}
+
+  Die \defNotion{width} einer \defNotion{tree decomposition} wird definiert als \(\max \{ |X_i| : i \in I \} - 1\). Die \defNotion{tree width} \(\tw(G)\) eines Graphen \(G\) ist die kleinste natürliche Zahl \(w\), für die eine tree decomposition mit width \(w\) existiert.
+
+  \begin{figure}[h]
+    \centerline{
+      \xymatrix{
+        &&& 1 \\
+        && 2 \ar[ur] \\
+        & 3 \ar[ur] && \ar[ul] 4 \\
+        5 \ar[ur] && 6 \ar[ul] \\
+      }
+    }
+    \caption{Beispiel (a): Eine tree decomposition dieses Graphen ist \(G\) selbst, wobei jedes bag zwei Knoten enthält. Die Menge der bags ist dann \( \{ \{1,2\}, \{2,3\}, \{2,4\}, \{3,5\}, \{3, 6\} \} \).}
+  \end{figure}
+
+  \begin{figure}[h]
+    \centerline{
+      \xymatrix{
+        && \{ 1,2 \} \\
+        & \{2,3\} \ar[ur] && \ar[ul] \{ 2,4 \} \\
+        \{3,5\} \ar[ur] && \{3,6\} \ar[ul]
+      }
+    }
+    \caption{Die bags der tree decomposition aus \(G\) wie oben definiert.}
+  \end{figure}
+
+  Wie im Beispiel gesehen, haben alle Bäume stets tree width 1. Als nächstes Beispiel betrachten wir einen Kreis mit \(n\) Knoten.
+
+  \begin{figure}[h]
+    \centerline{
+      \xymatrix{
+        && \circ \ar[r] & \circ & \\
+        &\circ \ar[ur] &&& \circ \ar[ul] \\
+        &\circ \ar[u] &&& \circ \ar[u] \\
+        && \circ \ar[ul] \ar[r] & \circ \ar[ur] & \\
+        \circ \ar[r] & \circ \ar[r] & \circ \ar[r] & \circ \ar[r] & \circ \ar[r] & \circ \ar[rd] \\
+        & \circ \ar[lu] & \circ \ar[l] & \circ \ar[l] & \circ \ar[l] & \circ \ar[l] & \circ \ar[l] \\
+      }
+    }
+    \caption{Beispiel (b): Zwei Bilder des selben Graphen \(C_n\). Als bags wählt man die Mengen aus den drei linken und drei rechten Knoten, sowie jeweils 3 nebeneinanderliegende Knoten sowie einen gegenüberliegenden.}
+  \end{figure}
+
+  \begin{figure}[h]
+    \centerline{
+      \xymatrix{
+        \circ \ar[r] & \circ && \circ \ar[r] \ar[rd] & \circ \\
+        \circ &&&& \circ
+      }
+    }
+    \caption{Bags der tree decomposition im Kreis \(C_n\)}
+  \end{figure}  
+
+  \begin{figure}[h]
+    \centerline{
+      \xymatrix{
+        \circ \ar[r] \ar[d] & \circ \ar[r] \ar[d] & \circ \ar[r] \ar[d] & \circ \ar[r] \ar[d] & \circ \ar[r] \ar[d] & \circ       \ar[d] \\
+        \circ \ar[r]        & \circ \ar[r]        & \circ \ar[r]        & \circ \ar[r]        & \circ \ar[r]        & \circ       
+      }
+    }
+    \caption{Beispiel (c): Eine Leiter \(G\), die bags der tree decomposition sind wiederum 3-Mengen aus "`L"' wie beim Kreis \(C_n\)}
+  \end{figure}
+
+  \begin{figure}[h]
+    \centerline{
+      \xymatrix{
+        \circ \ar[r] \ar[d] & \circ \ar[r] \ar[d] & \circ \ar[d] \ar[r] & \circ \ar[r] \ar[d] & \circ \ar[r] \ar[d] & \circ       \ar[d] \\
+        \circ \ar[r]        & \circ \ar[r] \ar[d] & \circ \ar[d] \ar[r] & \circ \ar[r]        & \circ \ar[r]        & \circ \\
+                            & \circ \ar[r] \ar[d] & \circ \ar[d] \\
+                            & \circ \ar[r] \ar[d] & \circ \ar[d] \\
+        \circ \ar[r] \ar[d] & \circ \ar[r] \ar[d] & \circ \ar[d] \ar[r] & \circ \ar[r] \ar[d] & \circ \ar[d] \\
+        \circ \ar[r]        & \circ \ar[r] \ar[d] & \circ \ar[d] \ar[r] & \circ \ar[r]        & \circ \\
+                            & \circ \ar[r]        & \circ  \\
+      }
+    }
+    \caption{Beispiel (c'): Eine modifizierte Leiter \(G\), die bags der tree decomposition sind 4-Mengen aus benachbarten Knoten (quadratisch angeordnet)}
+  \end{figure}
+
+  Beispiel (d): Der vollständige Graph \(K_n\). Seine tree width beträgt \(n-1\), da alle Knoten in ein bag der tree decomposition müssen.
+
+  Beispiel (e): Ein Gitter-Graph \(G\) mit \(k \cdot l\) Knoten. Als Bags wählen wir jeweils zwei benachbarte Spalten, damit erhalten wir eine obere Schranke von \(\tw(G) \leq 2 \cdot \min \{ k,l \}\).
