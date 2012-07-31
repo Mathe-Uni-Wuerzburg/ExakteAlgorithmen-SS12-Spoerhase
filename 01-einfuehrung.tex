@@ -1,3 +1,117 @@
 \chapter{Einführung}
 
-  \TODO{Hier fehlt noch etwas.}
+  Es sei \(f \in O^*(c^n) \iffDefinedBy f \in O(c^n \cdot \text{poly}(n))\).
+
+\section{Der Held-Karp-Algorithmus für TSP}
+
+  Gegeben seien \(n\) Städte \(c_1, ..., c_n\) und für jedes Paar \(c_i \neq c_j\) eine Distanz \(d(c_i,c_j)\). Wir suchen eine Permutation \(\Pi\) auf \(\{1,...,n\}\), sodass die Gesamtlänge \[\left( \sum_{i=1}^{n-1} d(c_{\Pi(i)},c_{\Pi(i+1)}) \right) + d(c_{\Pi(n)},c_{\Pi(1)})\] minimal ist.
+
+  Ein brute-force-Algorithmus würde alle Permutation ausprobieren und damit Laufzeit \(O(n! \cdot n)\) haben. Dies ist eine exponentielle Laufzeit, denn es gilt
+  \begin{eqnarray*}
+    && \left(\frac{n}{2}\right)^\frac{n}{2} \leq n! \leq n^n \\
+    &\Leftrightarrow& 2^{\frac{n}{2} \cdot \log_2 \frac{n}{2}} \leq n! \leq 2^{n \cdot \log_2 n} \\
+    &\Rightarrow& \Theta(n!) = 2^{\Theta(n \cdot \log_2 n)}.
+  \end{eqnarray*}
+
+  Für den Algorithmus von Held-Karp definieren wir \(\OPT[S,c_i]\) mit der nichtleeren Menge \(S \subseteq \{ c_2, ..., c_n \}\) und \(c_i \in S\) als Länge des kürzestens Weges von \(c_1\) nach \(c_i\), der genau die Städte \(S \cup \{ c_1 \}\) besucht. Damit ist \(\OPT[\{c_i\},c_i] = d(c_1,c_i)\) und \[\OPT[S,c_i] = \min_{c_j \in S \setminus \{c_i\}} \{ \OPT[S \setminus \{ c_i \}, c_j ] + d(c_j,c_i)\}, \text{ für } |S| \geq 2.\]
+
+  \begin{algorithm}[H]
+    \caption{Algorithmus von Held-Karp zum Lösen von TSP}
+
+    \KwName{Algorithmus von Held-Karp} \\
+    \KwData{Städte \(c_1,...,c_n\) und Distanzfunktion \(d\)}
+    \KwResult{Länge der kürzesten Rundreise durch alle \(c_i\)}
+
+    \For{\(i = 1\) bis \(n\)}{
+      \(\OPT[\{c_i\},\{c_i\}] \leftarrow d(c_1,c_i) \)
+    }
+
+    \For{\(j = 2\) bis \(n\)}{
+      \For{\(S \subseteq \{ c_2,....,c_n \}\) mit \(|S| = j\)}{
+        \For{\(c_i \in S\)}{
+          \(\displaystyle \OPT[S,c_i] \leftarrow \min_{c_j \in S \setminus \{c_i\}} \{ \OPT[S \setminus \{ c_i \}, c_j ] + d(c_j,c_i)\}\)
+        }
+      }
+    }
+
+    \Return \(\displaystyle \min_{i \in \{2,...,n\}} \{ \OPT[\{c_2,...,c_n\},c_i] + d(c_i,c_1) \}\)
+  \end{algorithm}
+
+  Die Laufzeit von Held-Karp liegt in \(O(2^n \cdot n^2) \subseteq O^*(2^n)\). \marginpar{Warum \(n^2\)?}
+
+\section{Ein Branching-Algorithmus für Independent Set}
+
+  Es sei ein Graph \(G = (V,E)\) gegeben. Gesucht ist ein \(U \subseteq V\), so dass keine zwei Knoten aus \(U\) adjazent in \(G\) sind.
+
+  Ein brute-force-Algorithmus würde in \(O^*(2^n)\) alle möglichen Teilmengen ausprobieren. Stattdessen wollen wir einen Algorithmus für independent set angeben, der in \(O^*(3^{n/3}) = O^*(1.4423^n)\) liegt. Wir beobachten zunächst: Ist \(U\) eine maximale unabhängige Menge, so gilt
+
+  \begin{enumerate}[(i)]
+   \item \(v \in U \implies N(v) \cap U = \emptyset\),
+   \item \(v \notin U \implies |N(v) \cap U| \geq 1\).
+  \end{enumerate}
+
+  Wir definieren außerdem die Menge \(N[v] \isDefinedBy N(v) \cup \{v\}\).
+
+  \begin{algorithm}[H]
+    \caption{Algorithmus zur Berechnung der Mächtigkeit einer größten unabhängigen Menge}
+
+    \KwName{MIS} \\
+    \KwData{Graph \(G = (V,E)\)}
+    \KwResult{Mächtigkeit einer größten unabhängigen Menge}
+
+    \uIf{\(|V| = 0\)}{
+      \Return 0
+    }\Else{
+      \(v \leftarrow\) Knoten mit minimalem Grad \;
+      \Return 1 + \(\displaystyle \max_{y \in N[v]} \{ \text{\textit{MIS}}(G \setminus N[y]) \}\)
+    }
+  \end{algorithm}
+
+  Dieser Algorithmus hat Laufzeit \(O^*(1.4423^n)\).
+
+\section{Weitere Branching-Algorithmen}
+
+  Ein Branching-Algorithmus besteht aus Branching- und Reduktionsregeln. Führt eine Branching-Regel auf einer Eingabe der Größe \(n\) zu \(r \geq 2\) Teilinstanzen der Größe \(n - t_1, ..., n - t_r\), so heißt \( (t_1,...,t_r) \) \defNotion{Branching-Vektor}. Es folgt für die Laufzeit \(T(n)\) dass \(T(n) \leq \sum_{i=1}^r T(n-t_i)\).
+
+  \begin{theorem} \label{satzLaufzeit}
+    Sei \(b\) eine Branching-Regel mit Branching-Vektor \( (t_1,...,t_r) \). Dann führt die ausschließliche Anwendung von \(b\) zur Laufzeit \(O^*(\alpha^n)\), wobei \(\alpha\) die eindeutige positive Lösung der Gleichung \[ x^t - x^{t-t_1} - x^{t - t_2} - ... - x^{t - t_r} = 0 \] mit \(t = \max t_i\) ist.
+  \end{theorem}
+
+\subsection{SAT}
+
+  Eingabe ist eine aussagenlogische Formel in konjunktiver Normalform. Existiert eine erfüllende Belegung der Variablen? Ein brute-force-Algorithmus hat Laufzeit \(O^*(2^n)\); ob ein Algorithmus mit Laufzeit \(O^*( (2-\varepsilon)^n )\) existiert ist ungeklärt.
+
+\subsection{$k$-SAT}
+
+  Eingabe ist eine aussagenlogische Formel in konjunktiver Normalform, in der jede Klausel Länge kleiner oder gleich \(k\) besitzt. Für eine Formel \(F\) in konjunktiver Normalform mit einer partiellen Vorbelegung \(t\) definieren wir die \defNotion{bereinigte Formel} \(F[t]\) durch Einsetzen von \(t\) und Vereinfachen von \(F\). Es folgt, dass \(t\) sich genau dann zu einer erfüllenden Belegung für \(F\) erweitern lässt, wenn \(F[t]\) erfüllbar ist.
+
+  \paragraph{Idee.} Für den folgenden Algorithmus seien die partiellen Vorbelegungen \(t_i\) definiert als \[ t_i: l_1 = ... = l_{i-1} = \text{false}, \quad l_i = \text{true}. \]
+
+  \begin{algorithm}[H]
+    \caption{Algorithmus zur Entscheidung einer \(k\)-CNF-Formel \(F\)}
+
+    \KwName{\(k\)-SAT1} \\
+    \KwData{Formel \(F\) in konjunktiver Normalform und maximaler Klausellänge \(k\)}
+    \KwResult{Erfüllbarkeit von \(F\)}
+
+    \uIf{\(F\) enthällt leere Klausel}{
+      \Return false
+    }\ElseIf{\(F\) ist die leere Formel}{
+      \Return true
+    }
+
+    wähle Klausel \(l = (l_1 \vee l_2 \vee ... \vee l_q)\) \;
+    \Return \(k\)-SAT1(\(F[t_1])\)) \(\vee\) \(k\)-SAT1(\(F[t_2])\)) \(\vee\) ... \(\vee\) \(k\)-SAT1(\(F[t_q])\))\;
+  \end{algorithm}
+
+  Für die Laufzeit ergibt sich die rekursive Formel \(T(n) \leq T(n-1) + T(n-2) + ... + T(n-q)\) mit einem \(q \leq k\). Die Laufzeit ergibt sich dann nach Satz \ref{satzLaufzeit}, für \(3\)-SAT beispielsweise \(O^*(1.8393^n)\).
+
+  \paragraph{Verbesserung.} Wir modifizieren den Algorithmus zu \(k\)-SAT2, indem wir immer die kleinste Klausel wählen. Wir nennen eine partielle Belegung \(t\) einer Formel \defNotion{autark}, wenn jede Klausel, die mindestens ein von \(t\) belegtes Literal enthält, auch ein von \(t\) mit wahr belegtes Literal enthält. Dies bedeutet, dass die Klausel unabhängig von allen anderen Literalen der Klausel wahr ist. Daraus ergeben sich die folgenden Beobachtungen.
+  \begin{enumerate}[(i)]
+   \item Wenn \(t\) autark ist, dann ist \(F\) genau dann erfüllbar, wenn \(F[t]\) erfüllbar. Das bedeutet, dass wir für autarke \(t\) das Ergebnis von \(k\)-SAT2(\(F[t]\)) zurückgeben können.
+   \item Wenn \(t\) nicht autark ist, dann enthält \(F[t]\) eine Klausel von Länge höchstens \(k-1\).
+   \item Sei \(r\) die Wurzel des Suchbaumes. Wenn \(v \neq r\) ein (Branching-)Knoten mit \(k\) Kindern im Suchbaum ist, so ist der Vaterknoten von \(v\) ein Reduce-Knoten.
+  \end{enumerate}
+  Mit diesen Verbesserungen erreicht man, dass \(k\)-SAT2 die selbe Laufzeit hat wie \((k-1)\)-SAT1.
+
+  

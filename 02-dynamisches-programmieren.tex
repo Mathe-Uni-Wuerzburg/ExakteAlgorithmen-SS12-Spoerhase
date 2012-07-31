@@ -1,10 +1,24 @@
 \chapter{Dynamisches Programmieren}
 
-  \TODO{Hier fehlt noch etwas}
-  
+\section{Dominating Set}
+
+  Sei ein Graph \(G = (V,E)\) gegeben. Wir nennen eine Menge \(D \subseteq V\) \defNotion{dominierend}, falls jeder Knoten in \(V \setminus D\) adjazent zu einem Knoten aus \(D\) ist.
+
+  Ein brute-force-Algorithmus für das kleinste dominating set läuft in \(O^*(2^n)\) durch Ausprobieren aller Teilmengen von \(V\). Zur Verbesserung dieser Laufzeit betrachten wir nicht erweiterbare unabhängige Mengen (NEUM) und verwenden dynamische Progammierung. Wir beobachten, dass sich eine NEUM effizient ermitteln lässt und jede NEUM dominierend ist.
+
+  \paragraph{Idee.} Zunächst bestimmen wir ein NEUM \(I\). Falls dieses klein ist, können wir alle Knotenmengen \(D\) mit \(|D| \leq |I|\) ausprobieren. Falls \(I\) groß ist, wenden wir das folgende Verfahren an.
+
+  \begin{lemma}
+    Sei \(G\) ein Graph und \(I\) ein zugehöriges NEUM. Dann lässt sich eine kleinste dominierende Menge in \(O^*(2^{n-|I|})\) ermitteln.
+  \end{lemma}
+
+  Beweis fehlt.
+
+%   \begin{proof}
+%     Wir definieren für Teilmengen \(D \subseteq V\) die Menge \(J_D \isDefinedBy D \cap J\) und \[\gamma \isDefinedBy \min \{ |D| : D \text{ dominiert } G \}.\] Dann ist die Menge \(I_D \isDefinedBy I \setminus N(J_D) = I \setminus N(J \cap D)\) in \(D\) enthalten, denn ein \(v \in I \setminus N(J \cap D)\) liegt in \(I\), jedoch nicht in der Nachbarschaft von \(J \cap D\). Damit wird \(v\) nicht von \(J \cap D\) dominiert. Da aber \(D\) eine dominierende Menge ist, muss \(v\) von \(I \cap D\) dominiert werden. .... \(v\) liegt nicht in \(N(J \cap D)\) und nicht in \(N(I \cap D)\), also \(v \notin N(D)\). Da \(v \notin N(D)\) und \(D\) dominierende Menge, gilt also \(v \in D\).
+%   \end{proof}  
+
   \marginpar{15.5.12}
-  
-  \TODO{Hier fehlt noch etwas}
   
   \begin{lemma}
     Sei \(\alpha \leq 1/2\). Dann gilt \[ \sum_{i=0}^{\alpha \cdot n} \binom{n}{i} = O^*( 2^{h(\alpha) \cdot n} ), \] wobei \(h(\alpha) = - \alpha \log_2 \alpha - (1-\alpha) \log_2(1 - \alpha)\).
@@ -31,7 +45,7 @@
   \end{proof}
   
   \begin{theorem}
-    Eine kleinste dominierende Mänge lässt sich in \(O(1,7088^n)\) ermitteln.
+    Eine kleinste dominierende Menge lässt sich in \(O(1{,}7088^n)\) ermitteln.
   \end{theorem}
   
   \begin{proof}

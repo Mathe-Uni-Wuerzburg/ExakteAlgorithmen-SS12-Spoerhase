@@ -1,5 +1,6 @@
 \chapter{Measure \& Conquer}
 
+\section{Maximal Independent Set}
   Measure and Conquer bezeichnet ein Verfahren, um Rekursonsgleichungen wie beispielsweise \(T(n) \leq T(n-1) + T(n-5)\) zu lösen. Ein Algorithmus für unabhängige Mengen ist
 
   \begin{algorithm}[H]
@@ -21,9 +22,10 @@
     }
   \end{algorithm}
 
-  In Fall 3 handelt es sich um Branching, die Laufzeit wird hier durch die Rekursonsgleichung \(T(n) \leq T(n-1) + T(n-4)\) beschrieben. Die Standardanalyse liefert eine Abschätzung von \(O(1,3803^n)\). Diese Analyse kann durch die Methode Measure \& Conquer verbessert werden.
+  In Fall 3 handelt es sich um Branching, die Laufzeit wird hier durch die Rekursonsgleichung \(T(n) \leq T(n-1) + T(n-4)\) beschrieben. Die Standardanalyse liefert eine Abschätzung von \(O(1{,}3803^n)\). Diese Analyse kann durch die Methode Measure \& Conquer verbessert werden.
 
-  \paragraph*{Dominating Set.} Wir betrachten nun einen Algorithmus für Dominating Set, der bei konventioneller Analyse Laufzeit \(O(1,9052^n)\), bei Analyse mit Measure \& Conquer jedoch \(O(1,5259^n)\) ergibt. Dazu modellieren wir Dominating Set als Set Cover-Instanz, wobei \(U = V\) und \(S = \{ N[v] : v \in V \}\) ist. Die Größe dieser Set Cover-Instanz ist dann \(|U| + |S| = n + n = 2n\). Wir entwickeln daher einen Algorithmus für Set Cover mit \(O^*(c^{|U|+|S|})\) und \(c \ll 2\).
+\section{Dominating Set}
+  Wir betrachten nun einen Algorithmus für Dominating Set, der bei konventioneller Analyse Laufzeit \(O(1{,}9052^n)\), bei Analyse mit Measure \& Conquer jedoch \(O(1{,}5259^n)\) ergibt. Dazu modellieren wir Dominating Set als Set Cover-Instanz, wobei \(U = V\) und \(S = \{ N[v] : v \in V \}\) ist. Die Größe dieser Set Cover-Instanz ist dann \(|U| + |S| = n + n = 2n\). Wir entwickeln daher einen Algorithmus für Set Cover mit \(O^*(c^{|U|+|S|})\) und \(c \ll 2\).
 
   Wir nehmen ohne Einschränkung an, dass \(U = \bigcup_{S_i \in S} S_i\). Damit ist eine Set Cover-Instanz durch \(S\) spezifiziert. Die \defNotion{Häufigkeit} eines Elements \(u \in U\) sei definiert als die Anzahl der Mengen aus \(S\), die \(u\) enthalten.
 
@@ -55,7 +57,7 @@
 
   Für die konventionelle Analyse sei \(k'(S) = |S| + |U(S)|\). Wir können aufgrund des Algorithmus die Rekursionsungleichung
   \[ T(k') \leq T(k' - 1) + T(k' - 4) \]
-  herleiten. Die übliche Lösungsmethode ergibt \(T(k') = O(1,3803^{k'})\). Damit ergibt sich als Laufzeit für Dominating Set \(O(1,3803^{2n}) = O(1,9052^n)\).
+  herleiten. Die übliche Lösungsmethode ergibt \(T(k') = O(1{,}3803^{k'})\). Damit ergibt sich als Laufzeit für Dominating Set \(O(1{,}3803^{2n}) = O(1{,}9052^n)\).
 
   Für die Analyse mittels Measure \& Konquer definiert man \(n_i\) als Anzahl der Mengen mit Kardinalität \(i\) und \(m_j\) als Anzahl der Elemente mit Häufigkeit \(j\). Das Maß sei
   \[ k(S_i) = \underbrace{ \sum_{i \geq 1} w_in_i }_{k_w(S_i)} + \sum_{j \geq 1} v_jm_j \]

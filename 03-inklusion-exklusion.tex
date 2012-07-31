@@ -8,7 +8,7 @@
   
   Gehe von einem Problem aus, bei es leicht ist zu zählen, welche Elemente aus dem Universum \(S\) die Eigenschaft \(A\) oder \(B\), \(A\) und \(B\), ... erfüllen; es aber schwer ist zu zählen, wie viele Elemente diese Eigenschaften nicht besitzen. Es ergibt sich jedoch der Zusammenhang
   \[
-    | \overline{A \cup B \cup C} | = |S| - ( |A| + |B| + |C| ) + ( |A \cap B| + |A \cap C| + |B \cap C| ) + ( | A \cap B \cap C | ).
+    | \overline{A \cup B \cup C} | = |S| - ( |A| + |B| + |C| ) + ( |A \cap B| + |A \cap C| + |B \cap C| ) - ( | A \cap B \cap C | ).
   \]
   Sind \(N\) Objekte und eine Menge \(P = \{ P_1, ... P_n \}\) von Eigenschaften gegeben, bezeichnen wir für jedes \(S \subseteq P\) mit \(N(S)\) die Anzahl der Objekte, die (mindestens) die Eigenschaften in \(S\) erfüllen. Mit \(N(0)\) bezeichnen wir die Anzahl der Objekte, die keine der Eigenschaften erfüllen. Wir können oben skizzierte Formel dann verallgemeinern, es ergibt sich
   
@@ -30,7 +30,8 @@
     Es sei \(P'_i\) die Eigenschaft, dass ein Objekt die Eigenschaft \(P_i\) nicht besitzt. Es ist dann \(N'(0) = N(P)\) und \(N'(P'_1, ... P'_k) = \overline{N}(P_1,...,P_k)\). Es folgt die Behauptung.
   \end{proof}
   
-  \paragraph*{Hamiltonpfad.} Wir betrachten nun das gerichtete Hamiltonpfadproblem. Gegeben sei ein gerichteter Graph \(G = (V,E)\) sowie Knoten \(s,t \in V\). Das gerichtete Hamiltonpfadproblem bezeichnet das Problem, ob ein einfacher \(s\)-\(t\)-Pfad existiert, der alle Knoten in \(V\) besucht. Dieses Problem ist NP-schwer. Brute force benötigt \(O^*(n!)\) Zeit. Wir geben einen Algorithmus an, der \(O^*(2^n)\) Zeit und polynomiellen Speicherplatz benötigt.
+\section{Hamiltonpfad}
+  Wir betrachten nun das gerichtete Hamiltonpfadproblem. Gegeben sei ein gerichteter Graph \(G = (V,E)\) sowie Knoten \(s,t \in V\). Das gerichtete Hamiltonpfadproblem bezeichnet das Problem, ob ein einfacher \(s\)-\(t\)-Pfad existiert, der alle Knoten in \(V\) besucht. Dieses Problem ist NP-schwer. Brute force benötigt \(O^*(n!)\) Zeit. Wir geben einen Algorithmus an, der \(O^*(2^n)\) Zeit und polynomiellen Speicherplatz benötigt.
   
   \begin{theorem}
     Die Anzahl der \(s\)-\(t\)-Hamiltonpfade kann in \(O^*(2^n)\) Zeit und mit polynomiellen Speicherplatzverbrauch ermittelt werden.
@@ -56,7 +57,8 @@
     Zur Berechnung des Endergebnisses iterieren wir über alle \(W \subseteq V \setminus \{s,t\}\) und berechnen jeweils \( \overline{N}(w) \) mit dem oben angegebenen dynamischen Programm. Wir addieren den Wert des Ausdrucks \( (-1)^{|W|} \cdot \overline{N}(w) \) und erhalten \(N(V)\) als Wert dieser Summe. Die Gesamtlaufzeit ergibt sich damit als \(O(m \cdot n \cdot 2^n)\), der Gesamtspeicherbedarf als \(O(m \cdot n)\), da der Speicher wiederverwendet werden kann.
   \end{proof}
   
-  \paragraph*{Graph-Färbung.} Wir betrachten nun das Problem der Graph-Färbung. Als Eingabe sei ein Graph \(G = (V,E)\) gegeben. Eine \defNotion{zulässige Färbung} weißt jedem Knoten so einer Farbe zu, dass keine zwei benachbarten Knoten die selbe Farbe haben. Gesucht ist die minimale Anzahl an Farben, mit denen dies möglich ist. Brute force benötigt die Zeit \( O^*(n^n) \). Wir geben einen Algorithmus an, der \(O^*(2^n)\) Zeit und Speicherplatz benötigt.
+\section{Graphfärbung}
+  Wir betrachten nun das Problem der Graph-Färbung. Als Eingabe sei ein Graph \(G = (V,E)\) gegeben. Eine \defNotion{zulässige Färbung} weißt jedem Knoten so einer Farbe zu, dass keine zwei benachbarten Knoten die selbe Farbe haben. Gesucht ist die minimale Anzahl an Farben, mit denen dies möglich ist. Brute force benötigt die Zeit \( O^*(n^n) \). Wir geben einen Algorithmus an, der \(O^*(2^n)\) Zeit und Speicherplatz benötigt.
   
   Wir nennen die Menge aller Knoten einer bestimmten Farbe eine \defNotion{Farbklasse}. Für korrekte Färbungen ist eine Farbklasse eine unabhängige Knotenmenge, daher können wir das Graphfärbungsproblem auch als Problem, die kleine Anzahl an unabhängigen Knotenmengen \(I_1,...,I_k\), die \(V\) partitionieren, formulieren. Dies ist verwand zum Set-Cover-Problem \( (\mathcal{I}, V) \), wobei \(\mathcal{I}\) die Menge aller unabhängigen Mengen ist. Verallgemeinert betrachten wir daher Set-Cover-Instanzen \( (S,U) \), bei denen \(U\) explizit gegeben ist und \(S\) in \(O^*(2^n)\) mit \(n = |U|\) aufgezählt werden kann. 
   
