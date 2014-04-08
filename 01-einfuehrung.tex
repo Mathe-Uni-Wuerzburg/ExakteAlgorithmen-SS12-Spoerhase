@@ -1,19 +1,77 @@
 \chapter{Einführung}
 
-  Es sei \(f \in O^*(c^n) \iffDefinedBy f \in O(c^n \cdot \text{poly}(n))\).
+  \section{Motivation}
+  \begin{itemize}
+   \item effiziente Algorithmen vs. ineffiziente Algorithmen (also: polynomiell vs. super-polynomiell)
+   \item Warum beschäftigen wir uns mit ineffizienten Algorithmen? Damit wir NP-schwere Probleme angehen können.
+   \item Um mit NP-schweren Problemen umgehen zu können, bedient man sich:
+   \begin{itemize}
+    \item Näherungsverfahren
+    \begin{itemize}
+     \item Approximationsalgorithmen
+     \item Heuristiken
+    \end{itemize}
+    \item Exakte Verfahren
+    \begin{itemize}
+     \item exakte exponentielle Algorithmen
+     \item parametrisierte Algorithmen, also Laufzeiten der Form $f(k)\cdot poly(n)$
+    \end{itemize}
+   \end{itemize}
+   \item Warum haben wir Interesse an exakten Verfahren?
+   \begin{itemize}
+    \item (Laufzeit nicht entscheidend)
+    \item nicht-approximierbare Probleme
+    \item moderate Eingabegröße
+    \begin{itemize}
+     \item z.B.: $n^3 > 1,0941^n \cdot n$ für $n \leq 100$
+     \item TSP exakt lösbar für $n\leq 2000$ (für euklidsche Instanzen sogar bis 15000)
+     \item $2^{100}\cdot n > 2^n$ für $n \leq 100$
+    \end{itemize}
+    \item Entscheidungsprobleme (z.B.: Hamiltonkreis)
+    \item theoretisches Interesse
+   \end{itemize}
+   \item Thema: geht es intelligenter und schneller als Brute-Force?
+   \item typisches Resultat: \\
+   \begin{tabular}{lcr}
+      BF: &$O(2^n)$ & $O^*(2^n)$\\ 
+      Alg1: &$O(n\cdot 1,5^n)$ &$O^*(1,5^n)$\\ 
+      Alg2: &$O(n^2\cdot 1,4^n)$ &$O^*(1,4^n)$\\
+   \end{tabular}
+   \item Wozu solche Ergebnisse? \\
+   \begin{align*}
+    a^{n_0'} &= c\cdot a^{n_0}\\
+    n_0' \cdot \log a &= \log c + n_0 \log a\\
+    n_0' &= \frac{\log c}{\log a} + n_0\\
+   \end{align*}
+   $\Rightarrow$ mehr Rechenleistung bringt nicht immer die gewünschte Laufzeitverbesserung, aber:
+   \begin{align*}
+    a^n, b^n, &a < b\\
+    a^{n_0'} &= b^{n_0}\\
+    n_0' &= \frac{\log b}{\log a} n_0\\
+   \end{align*}
+   \item Literatur: \textit{Exact Exponential Algorithms} von Fomin/Kratsch.
+  \end{itemize}
+  
+  \begin{definition}[$O^*$-Notation]
+   \[f(n) = O^*(g(n)) \Leftrightarrow f(n) = O(g(n)\cdot poly(n))\]
+   z.B: $O(1,498^n\cdot n^{100}) \subsetneq O(1,499^n)$
+  \end{definition}
 
-\section{Der Held-Karp-Algorithmus für TSP}
+\begin{section}{Der Held-Karp-Algorithmus für TSP}
 
-  Gegeben seien \(n\) Städte \(c_1, ..., c_n\) und für jedes Paar \(c_i \neq c_j\) eine Distanz \(d(c_i,c_j)\). Wir suchen eine Permutation \(\Pi\) auf \(\{1,...,n\}\), sodass die Gesamtlänge \[\left( \sum_{i=1}^{n-1} d(c_{\Pi(i)},c_{\Pi(i+1)}) \right) + d(c_{\Pi(n)},c_{\Pi(1)})\] minimal ist.
+  Gegeben seien \(n\) Städte \(c_1, ..., c_n\) und für jedes Paar \(c_i \neq c_j\) eine Distanz \(d(c_i,c_j)\). Wir suchen eine Permutation (Rundtour) \(\Pi\) auf \(\{1,...,n\}\), sodass die Gesamtlänge der Tour 
+  \[\left( \sum_{i=1}^{n-1} d(c_{\Pi(i)},c_{\Pi(i+1)}) \right) + d(c_{\Pi(n)},c_{\Pi(1)})\] 
+  minimal ist.
 
   Ein brute-force-Algorithmus würde alle Permutation ausprobieren und damit Laufzeit \(O(n! \cdot n)\) haben. Dies ist eine exponentielle Laufzeit, denn es gilt
-  \begin{eqnarray*}
-    && \left(\frac{n}{2}\right)^\frac{n}{2} \leq n! \leq n^n \\
-    &\Leftrightarrow& 2^{\frac{n}{2} \cdot \log_2 \frac{n}{2}} \leq n! \leq 2^{n \cdot \log_2 n} \\
-    &\Rightarrow& \Theta(n!) = 2^{\Theta(n \cdot \log_2 n)}.
-  \end{eqnarray*}
-
-  Für den Algorithmus von Held-Karp definieren wir \(\OPT[S,c_i]\) mit der nichtleeren Menge \(S \subseteq \{ c_2, ..., c_n \}\) und \(c_i \in S\) als Länge des kürzestens Weges von \(c_1\) nach \(c_i\), der genau die Städte \(S \cup \{ c_1 \}\) besucht. Damit ist \(\OPT[\{c_i\},c_i] = d(c_1,c_i)\) und \[\OPT[S,c_i] = \min_{c_j \in S \setminus \{c_i\}} \{ \OPT[S \setminus \{ c_i \}, c_j ] + d(c_j,c_i)\}, \text{ für } |S| \geq 2.\]
+  \begin{align*}
+    \Theta(n!\cdot n) &= n\cdot 2^{\Theta(n \cdot \log_2 n)}\\
+    2^{O(n \log n)} = (\frac{n}{2})^{\frac{n}{2}} &\leq n! \leq n^n = 2^{n\log n}
+  \end{align*}
+  
+  \underline{Dynamisches Programm}\\
+  Für den Algorithmus von Held-Karp definieren wir \(\OPT[S,c_i]\) mit der nichtleeren Menge \(S \subseteq \{ c_2, ..., c_n \}\) und \(c_i \in S\) als Länge des kürzestens Weges von \(c_1\) nach \(c_i\), der genau die Städte \(S \cup \{ c_1 \}\) besucht. Damit ist für $|S| = 1$ gerade \(\OPT[\{c_i\},c_i] = d(c_1,c_i)\) und für $|S| \geq 2$:
+  \[\OPT[S,c_i] = \min_{c_j \in S \setminus \{c_i\}} \{ \OPT[S \setminus \{ c_i \}, c_j ] + d(c_j,c_i)\}.\]
 
   \begin{algorithm}[H]
     \caption{Algorithmus von Held-Karp zum Lösen von TSP}
@@ -23,7 +81,7 @@
     \KwResult{Länge der kürzesten Rundreise durch alle \(c_i\)}
 
     \For{\(i = 1\) bis \(n\)}{
-      \(\OPT[\{c_i\},\{c_i\}] \leftarrow d(c_1,c_i) \)
+      \(\OPT[\{c_i\},c_i] \leftarrow d(c_1,c_i) \)
     }
 
     \For{\(j = 2\) bis \(n\)}{
@@ -38,6 +96,7 @@
   \end{algorithm}
 
   Die Laufzeit von Held-Karp liegt in \(O(2^n \cdot n^2) \subseteq O^*(2^n)\). \marginpar{Warum \(n^2\)?}
+\end{section}
 
 \section{Ein Branching-Algorithmus für Independent Set}
 
