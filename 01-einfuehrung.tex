@@ -95,21 +95,23 @@
     \Return \(\displaystyle \min_{i \in \{2,...,n\}} \{ \OPT[\{c_2,...,c_n\},c_i] + d(c_i,c_1) \}\)
   \end{algorithm}
 
-  Die Laufzeit von Held-Karp liegt in \(O(2^n \cdot n^2) \subseteq O^*(2^n)\). \marginpar{Warum \(n^2\)?}
+  \underline{Laufzeit} von Held-Karp:\\
+  Der innere Ausdruck der For-Schleifen dauert $O(n)$. Dieser wird für höchstens alle Paare $(S,c_i)$ mit $S \subseteq \{c_2, \dots, c_n\}$ und $c_i \in S$ ausgewertet. Davon gibt es $O(n \cdot 2^n)$ viele, da es $2^n$ Teilmengen gibt und jede dieser Teilmengen $O(n)$ viele Elemente hat. Damit ergibt sich eine Gesamtlaufzeit von $O(2^n \cdot n^2) \subseteq O^*(2^n)$.
+  
+  \underline{Speicherplatz}: $O(n\cdot 2^n)$
 \end{section}
 
-\section{Ein Branching-Algorithmus für Independent Set}
+\begin{section}{Ein Branching-Algorithmus für Größte unabhängige Teilmenge (Maximum independent Set, MIS)}
 
-  Es sei ein Graph \(G = (V,E)\) gegeben. Gesucht ist ein \(U \subseteq V\), so dass keine zwei Knoten aus \(U\) adjazent in \(G\) sind.
+  Es sei ein Graph \(G = (V,E)\) gegeben. Gesucht ist ein \(I \subseteq V\) maximaler Kardinalität, so dass keine zwei Knoten aus \(U\) adjazent in \(G\) sind.
 
-  Ein brute-force-Algorithmus würde in \(O^*(2^n)\) alle möglichen Teilmengen ausprobieren. Stattdessen wollen wir einen Algorithmus für independent set angeben, der in \(O^*(3^{n/3}) = O^*(1.4423^n)\) liegt. Wir beobachten zunächst: Ist \(U\) eine maximale unabhängige Menge, so gilt
+  Ein brute-force-Algorithmus würde in \(O^*(2^n)\) alle möglichen Teilmengen ausprobieren. Stattdessen wollen wir einen Algorithmus für MIS angeben, der in \(O^*(3^{n/3}) = O^*(1.4423^n)\) liegt. Wir beobachten zunächst: Ist \(I\) eine maximale unabhängige Menge, so gilt:
 
   \begin{enumerate}[(i)]
-   \item \(v \in U \implies N(v) \cap U = \emptyset\),
-   \item \(v \notin U \implies |N(v) \cap U| \geq 1\).
+   \item \(v \in I \implies N(v) \cap I = \emptyset\),
+   \item \(v \notin I \implies |N(v) \cap I| \geq 1\),
+   \item $N[v] \isDefinedBy N(v) + v: N[v]$ enthält immer einen Konten $y$ aus $I$ und kein anderer Knoten aus $N[y]$ liegt in $I$.
   \end{enumerate}
-
-  Wir definieren außerdem die Menge \(N[v] \isDefinedBy N(v) \cup \{v\}\).
 
   \begin{algorithm}[H]
     \caption{Algorithmus zur Berechnung der Mächtigkeit einer größten unabhängigen Menge}
@@ -121,14 +123,67 @@
     \uIf{\(|V| = 0\)}{
       \Return 0
     }\Else{
-      \(v \leftarrow\) Knoten mit minimalem Grad \;
+      wähle $v \in V$ mit geringstem Grad\\
       \Return 1 + \(\displaystyle \max_{y \in N[v]} \{ \text{\textit{MIS}}(G \setminus N[y]) \}\)
     }
   \end{algorithm}
+  
+  \underline{Analyse:}\\
+  Die Ausführung korrespondiert zu einem Suchbaum. Die Laufzeit entspricht $O^*(\sharp\text{Knoten im Suchbaum})$. Knoten vom Grad $2$ können für die Laufzeit-Analyse ignoriert werden, da ein Pfad aus Grad-$2$ Knoten im Suchbaum höchstens $n$ lang sein kann. Es reicht also, den reduzierten Suchbaum zu betrachten. In diesem sind aber mindestens die Hälfte aller Knoten Blätter.\\
+  \underline{Alternativ:}\\
+  Sei $l$ ein Blatt im Suchbaum, dann sein $L(l)$ die Länge des Pfades von der Wurzel zu $l$. Dann gilt für die Laufzeit des Algorithmus:
+  \[ O^*(\sharp\text{Knoten}) \subseteq O^*(\sum_{l \text{ Blatt}} L(l)) \subseteq O^*(\sum_{l \text{ Blatt}} n) = O^*(\sharp\text{Knoten})\]
+  
+  Für die Anzahl der Knoten im Baum gilt folgende Rekursionsgleichung:\\
+  \begin{align*}
+  B(n) &\leq \sum_{y \in N[v]} B(n-(d(y)+1))\\
+  &\leq \sum_{y \in N[v]} B(n-(d(v)+1))\\
+  &= (d(v) + 1) \cdot B(n-\underbrace{(d(v) + 1)}_{=: s})\\
+  &= s \cdot B (n-s)
+  \end{align*}
+  
+  Auflösen der Rekursionsgleichung durch Beweis per Induktion:\\
+  \begin{align*}
+  B(0) &= 1\\
+  \text{Behauptung: } B(n) &= 3^{\frac{n}{3}}\\
+  \text{Induktion: (IA) } B(0) &= 1 \leq 3^{\frac{n}{3}}\\
+  B(n) &\overset{\text{(IA)}}{\leq} s\cdot 3^{\frac{n-s}{3}} = 3^{\frac{n}{3}} \cdot \frac{s}{3^\frac{s}{3}} \leq 3^{\frac{n}{3}}
+  \end{align*}
 
-  Dieser Algorithmus hat Laufzeit \(O^*(1.4423^n)\).
+  Dieser Algorithmus hat also Laufzeit \(O^*(1.4423^n)\).
+\end{section}
 
-\section{Weitere Branching-Algorithmen}
+
+
+  
+\begin{section}{Anwenungsgebiete für exakte Algorithmen}
+
+  \begin{subsection}{NP-Entscheidungsprobleme}
+  Gegeben ist die Eingabe $x \in \{0,1\}^*$. Gesucht ist die Lösung $y \in \{0,1\}^*$ mit $|y| \leq m(|x|)$ für ein Polynom $m$ und $R(x,y) = true$, wobei $R$ ein polynomialzeit-berechenbare Relation ist.
+  
+  Der brute-force Ansatz hat eine Laufzeit von $O^* (2^{m(|x|)})$.
+  \end{subsection}
+
+  \begin{subsection}{NP-Optimierungsprobleme}
+  Gegeben ist eine Eingabe $x$, gesucht ist eine zulässige Lösung $y$ mit $R(x,y) = true$ und $|y| \leq m(|x|)$. Ziel ist es, einen minimalen (maximalen) Zielfunktionswert $obj(x,y) \in \mathbb{N}^+$. Hierbei sind $R,m, obj$ polynomialzeit-berechenbare Funktionen und $m$ zusätzlich polynomiell.
+  \end{subsection}
+  
+  \begin{subsection}{Teilmengenprobleme}
+   Eine zulässige Lösung ist eine Teilmenge einer gegebenen Grundmenge der Kardinalität $n$, z.B. MIS. Brute-force Ansätze haben hier eine Laufzeit von $O^*(2^n)$ -- alle möglichen Teilmengen testen.
+  \end{subsection}
+  
+  \begin{subsection}{Permutationsprobleme}
+   Eine zulässige Lösung ist eine Permutation einer gegeben Grundmenge mit Kardinalität $n$, z.B. TSP. Brute-force Ansätze dafür laufen in $O^*(n!) = O^*(2^{O(n\log n)})$
+  \end{subsection}
+  
+  \begin{subsection}{Partitionierungsprobleme}
+   Eine zulässige Lösung ist eine Partitionierung einer gegeben Grundmenge mit Kardinalität $n$, z.B. Graph-Färbbarkeit. Brute-force: $O^*(n^n) = O^*(2^{n\log n})$.
+  \end{subsection}
+  
+\end{section}
+
+\begin{section}{Weitere Branching-Algorithmen}
+
 
   Ein Branching-Algorithmus besteht aus Branching- und Reduktionsregeln. Führt eine Branching-Regel auf einer Eingabe der Größe \(n\) zu \(r \geq 2\) Teilinstanzen der Größe \(n - t_1, ..., n - t_r\), so heißt \( (t_1,...,t_r) \) \defNotion{Branching-Vektor}. Es folgt für die Laufzeit \(T(n)\) dass \(T(n) \leq \sum_{i=1}^r T(n-t_i)\).
 
@@ -172,5 +227,6 @@
    \item Sei \(r\) die Wurzel des Suchbaumes. Wenn \(v \neq r\) ein (Branching-)Knoten mit \(k\) Kindern im Suchbaum ist, so ist der Vaterknoten von \(v\) ein Reduce-Knoten.
   \end{enumerate}
   Mit diesen Verbesserungen erreicht man, dass \(k\)-SAT2 die selbe Laufzeit hat wie \((k-1)\)-SAT1.
-
+  
+\end{section}
   
