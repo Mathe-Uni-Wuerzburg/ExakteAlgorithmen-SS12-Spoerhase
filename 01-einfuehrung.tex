@@ -152,12 +152,8 @@
 
   Dieser Algorithmus hat also Laufzeit \(O^*(1.4423^n)\).
 \end{section}
-
-
-
   
 \begin{section}{Anwenungsgebiete für exakte Algorithmen}
-
   \begin{subsection}{NP-Entscheidungsprobleme}
   Gegeben ist die Eingabe $x \in \{0,1\}^*$. Gesucht ist die Lösung $y \in \{0,1\}^*$ mit $|y| \leq m(|x|)$ für ein Polynom $m$ und $R(x,y) = true$, wobei $R$ ein polynomialzeit-berechenbare Relation ist.
   
@@ -179,28 +175,97 @@
   \begin{subsection}{Partitionierungsprobleme}
    Eine zulässige Lösung ist eine Partitionierung einer gegeben Grundmenge mit Kardinalität $n$, z.B. Graph-Färbbarkeit. Brute-force: $O^*(n^n) = O^*(2^{n\log n})$.
   \end{subsection}
-  
 \end{section}
 
 \begin{section}{Weitere Branching-Algorithmen}
+  \underline{Allgemeine Form (Branch \& Reduce):}\\
+  Ein Branching-Algorithmus besteht aus Branching- und Reduktionsregeln. 
+  \begin{itemize}
+   \item Branch-Regel: Unterscheide verschiedene Möglichkeiten und löse für jedes ein entsprechendes Teilproblem; gewinne daraus die Lösung für das Gesamtproblem.
+   \item Reduce-Regel: Reduziere die Problemgröße; stop
+  \end{itemize}
+  Die \textit{Korrektheit} von Branching-Algorithmen wird oft nicht bewiesen, da sie sich direkt aus dem vorliegenden Code ergibt. Die \textit{Laufzeit} von Branching-Algorithmen analysiert man auf Basis der Anzahl der Blätter des Suchbaum.
 
-
-  Ein Branching-Algorithmus besteht aus Branching- und Reduktionsregeln. Führt eine Branching-Regel auf einer Eingabe der Größe \(n\) zu \(r \geq 2\) Teilinstanzen der Größe \(n - t_1, ..., n - t_r\), so heißt \( (t_1,...,t_r) \) \defNotion{Branching-Vektor}. Es folgt für die Laufzeit \(T(n)\) dass \(T(n) \leq \sum_{i=1}^r T(n-t_i)\).
-
+  \begin{definition}[Branching-Vektor]
+    Betrachte die Anwendung einer Branching-Regel $b$ auf einer Eingabe der Größe $n$. Angenommen, $b$ zerlegt die Probleminstanz in \(r \geq 2\) verschiedene Teilinstanzen der Größe $n - t_1, ..., n - t_r$, so heißt $(t_1,...,t_r)$ \textit{Branching-Vektor} von $b$. 
+  \end{definition}
+  
+  Für die Laufzeit ergibt sich daher folgende Rekurrenzgleichung für $T(n)$: 
+  \begin{align*}
+    T(n) &\leq \sum_{i=1}^r T(n-t_i)\\
+    T(0) &= 1
+  \end{align*}
+  für die Anzahl der Blätter.
+  
   \begin{theorem} \label{satzLaufzeit}
-    Sei \(b\) eine Branching-Regel mit Branching-Vektor \( (t_1,...,t_r) \). Dann führt die ausschließliche Anwendung von \(b\) zur Laufzeit \(O^*(\alpha^n)\), wobei \(\alpha\) die eindeutige positive Lösung der Gleichung \[ x^t - x^{t-t_1} - x^{t - t_2} - ... - x^{t - t_r} = 0 \] mit \(t = \max t_i\) ist.
+    Sei \(b\) eine Branching-Regel mit Branching-Vektor \( (t_1,...,t_r) \). Dann führt die ausschließliche Anwendung von \(b\) zur Laufzeit \(O^*(\alpha^n)\), wobei \(\alpha\) die eindeutige positive relle Lösung der Gleichung 
+    \[ x^t - x^{t-t_1} - x^{t - t_2} - ... - x^{t - t_r} = 0 \] 
+    mit \(t = \max t_i, i \in [1,r]\) ist.
   \end{theorem}
+  \begin{proof}
+    Wir nehmen an: $T(n) = x^n$. Dann ergibt sich daraus:
+    \[ x^n \overset{!}{=} x^{n-t_1} + x^{n-t_2}+\dots+x^{n-t_r}\]
+    Division mit $x^{n-t}$ ergibt
+    \[ x^t = x^{t-t_1}+x^{x-t_2}+\dots+x^{t-t_r}\]
+    Zu zeigen bleibt noch, dass immer eine eindeutige relle positive Lösung existiert. 
+  \end{proof}
+  Problematisch dabei ist, dass die Lösung oft irrational ist und dass üblicherweise auf 5 Stellen gerundet wird. In Normalfall wird die Lösung mit $\tau(t_1,\dots,t_r)$ bezeichnet. Dieses $\tau$ nennt man auch \textit{Branching-Faktor}.
+  
+  \begin{lemma}
+   Sei $r \geq 2$ und $t_i > 0$ für $i = 1,\dots,r$, dann gilt
+   \begin{enumerate}[i)]
+    \item  $\tau(t_1,\dots,t_r) > 1$
+    \item $\tau(t_1,\dots,t_r) = \tau(t_{\pi(1)},\dots,t_{\pi(r)})$ für alle Permutationen $\pi$. Permutation der Fallreihenfolge ändert nichts an der Laufzeit, da es zum gleichen Suchbaum führt.
+    \item $\tau(t_1,\dots,t_r) < \tau(t'_1,\dots,t_r)$ für $t_1 > t'_1$. Man sagt dann auch, $\tau(t'_1,\dots,t_r)$ \underline{dominiert} $\tau(t_1,\dots,t_r)$.
+   \end{enumerate}
+  \end{lemma}
+  
+  \begin{lemma}[Balancing-Lemma]
+   \begin{enumerate}[i)]
+    \item $\tau(k,k) \leq \tau(i,j)$ mit $2\cdot k = i+j$
+    \item $\tau(i,j) < \tau(i+\varepsilon,j-\varepsilon)$ für $0<i<j$ und $0<\varepsilon< \frac{j-i}{2}$.
+   \end{enumerate}
+  \end{lemma}
+  
+  \textbf{Addition von Branching-Vektoren:}\\
+  Wir wissen, dass im rechten Baum $\tau(i,j) > \tau(k,l)$ gilt. Dann lässt sich der Baum wie folgt vereinfachen:
+  \[\begin{tikzpicture}
+    \draw (0,0)node[](x1){i+k} (2,0)node[](x2){i+l}
+	  (0,0.5)node[circle, draw](a1){} (2,0.5)node[circle,draw](a2){}
+	  (1,1.5)node[circle,draw](b1){} (3,1.5)node[circle,draw](b2){} (3,1)node[](x3){j}
+	  (2,2.5)node[circle,draw](c1){};
+    \path[fill,draw, postaction={decoration={text along path,text={k},text align ={left indent=10pt},raise=0.5ex},decorate}] (a1) -- (b1);
+    \path[fill,draw, postaction={decoration={text along path,text={l},text align ={left indent=10pt},raise=0.5ex},decorate}] (b1) -- (a2);
+    \path[fill,draw, postaction={decoration={text along path,text={i},text align ={left indent=10pt},raise=0.5ex},decorate}] (b1) -- (c1);
+    \path[fill,draw, postaction={decoration={text along path,text={j},text align ={left indent=10pt},raise=0.5ex},decorate}] (c1) -- (b2);
+  \end{tikzpicture}
+   \overset{\wedge}{=}
+   \begin{tikzpicture}
+    \draw (0,0)node[]{i+k} (2,0)node[]{i+l} (4,0)node[]{j}
+	  (0,0.5)node[circle, draw](a1){} (2,0.5)node[circle, draw](a2){} (4,0.5)node[circle, draw](a3){}
+	  (2,2.5)node[circle, draw](b){};
+    \filldraw (a1) -- (b) -- (a2);
+    \filldraw (a3) -- (b);
+   \end{tikzpicture}\]
+   Mit der neuen Darstellung: $\tau(i+k,i+l,j)$.
+  
 
-\subsection{SAT}
-
-  Eingabe ist eine aussagenlogische Formel in konjunktiver Normalform. Existiert eine erfüllende Belegung der Variablen? Ein brute-force-Algorithmus hat Laufzeit \(O^*(2^n)\); ob ein Algorithmus mit Laufzeit \(O^*( (2-\varepsilon)^n )\) existiert ist ungeklärt.
-
-\subsection{$k$-SAT}
-
-  Eingabe ist eine aussagenlogische Formel in konjunktiver Normalform, in der jede Klausel Länge kleiner oder gleich \(k\) besitzt. Für eine Formel \(F\) in konjunktiver Normalform mit einer partiellen Vorbelegung \(t\) definieren wir die \defNotion{bereinigte Formel} \(F[t]\) durch Einsetzen von \(t\) und Vereinfachen von \(F\). Es folgt, dass \(t\) sich genau dann zu einer erfüllenden Belegung für \(F\) erweitern lässt, wenn \(F[t]\) erfüllbar ist.
-
-  \paragraph{Idee.} Für den folgenden Algorithmus seien die partiellen Vorbelegungen \(t_i\) definiert als \[ t_i: l_1 = ... = l_{i-1} = \text{false}, \quad l_i = \text{true}. \]
-
+\begin{subsection}{SAT}
+  Eingabe ist eine aussagenlogische Formel in konjunktiver Normalform (KNF). Existiert eine erfüllende Belegung der Variablen? Ein brute-force-Algorithmus hat Laufzeit \(O^*(2^n)\); ob ein Algorithmus mit Laufzeit \(O^*( (2-\varepsilon)^n )\) existiert ist ungeklärt.
+\end{subsection}
+  
+\begin{subsection}{$k$-SAT}
+  Eingabe ist eine aussagenlogische Formel in konjunktiver Normalform, in der jede Klausel Länge kleiner oder gleich \(k\) besitzt. 
+  
+  Wir entwickeln für $k$-SAT einen Algorithmus mit Laufzeit $O^*(\alpha_k^n)$, wobei $\alpha_k < 2$.
+  \begin{itemize}
+   \item Der Algorithmus erweitert rekursiv partielle Belegungen der Variablen zu (ggf.) vollständingen Belegungen. 
+   \item Falls $t$ eine partielle Belegung einer Formel $F$ in KNF ist, dann ist $F[t]$ die \textit{reduzierte} Formel, die entsteht, indem man Klauseln streicht, die positive Literale enthalten und negierte Literale löschen. 
+   \item Also ist $F[t]$ erfüllbar, genau dann wenn $t$ sich zu einer erfüllbaren Belegung erweitern lässt. 
+   \item Enthält $F[t]$ leere Klauseln, so ist $F[t]$ nicht erfüllbar. 
+   \item Ist $F[t]$ leer, so ist $F[t]$ erfüllt.
+  \end{itemize}
+  
   \begin{algorithm}[H]
     \caption{Algorithmus zur Entscheidung einer \(k\)-CNF-Formel \(F\)}
 
@@ -214,7 +279,11 @@
       \Return true
     }
 
-    wähle Klausel \(l = (l_1 \vee l_2 \vee ... \vee l_q)\) \;
+    wähle Klausel \(l = (l_1 \vee l_2 \vee ... \vee l_q)\)\;
+    $t_1 \leftarrow l_1 = true$\; 
+    $t_2 \leftarrow l_1 = false, l_2 = true$\;
+    \vdots
+    $t_q \leftarrow l_1 = false, \dots, l_{q-1} = false, l_q = true$\; 
     \Return \(k\)-SAT1(\(F[t_1])\)) \(\vee\) \(k\)-SAT1(\(F[t_2])\)) \(\vee\) ... \(\vee\) \(k\)-SAT1(\(F[t_q])\))\;
   \end{algorithm}
 
@@ -227,6 +296,7 @@
    \item Sei \(r\) die Wurzel des Suchbaumes. Wenn \(v \neq r\) ein (Branching-)Knoten mit \(k\) Kindern im Suchbaum ist, so ist der Vaterknoten von \(v\) ein Reduce-Knoten.
   \end{enumerate}
   Mit diesen Verbesserungen erreicht man, dass \(k\)-SAT2 die selbe Laufzeit hat wie \((k-1)\)-SAT1.
-  
+\end{subsection}
 \end{section}
+  
   
