@@ -1,25 +1,69 @@
-\chapter{Dynamisches Programmieren}
+\begin{chapter}{Dynamisches Programmieren}
+\begin{section}{Dominating Set}
+  \begin{definition}
+   Sei ein Graph \(G = (V,E)\) gegeben. Wir nennen eine Menge \(D \subseteq V\) \defNotion{dominierend} für $G$, falls jeder Knoten $v \in V$ entweder in $D$ liegt, oder adjazent zu einem Knoten aus $D$ ist.
+  \end{definition}
+  \paragraph{Problem Minimum Dominating Set (MDS).} Eingabe ist ein Graph $G=(V,E)$, gesucht ist eine Dominierende Menge $D$ für $G$ mit minimaler Kardinalität $\gamma(G)$.
 
-\section{Dominating Set}
+  Ein brute-force-Algorithmus für das kleinste dominating set läuft in \(O^*(2^n)\) durch Ausprobieren aller Teilmengen von \(V\). Zur Verbesserung dieser Laufzeit betrachten wir nicht erweiterbare unabhängige Mengen (UM) und verwenden dynamische Progammierung. 
+  
+  \begin{lemma}
+   Eine UM lässt sich effizient berechnen.
+  \end{lemma}
+  \begin{proof}
+  Der folgende Algorithmus hat Laufzeit $O(n+m)$ und löst das gegebene Problem. 
+  
+  \begin{algorithm}[H]
+    \caption{Algorithmus zum Bestimmen einer nicht-erweiterbaren Unabhängingen Menge}
 
-  Sei ein Graph \(G = (V,E)\) gegeben. Wir nennen eine Menge \(D \subseteq V\) \defNotion{dominierend}, falls jeder Knoten in \(V \setminus D\) adjazent zu einem Knoten aus \(D\) ist.
+    \KwName{neUM} \\
+    \KwData{Graph $G$}
+    \KwResult{nicht-erweiterbare UM}
+    \uIf{$V=\emptyset$}{
+      \Return $\emptyset$
+    }
+    Wähle $v \in V$ mit höchstem Grad\\
+    \Return $v + $ neUM($G-N[v]$)
+  \end{algorithm}
+  \end{proof}
+  
+  \begin{lemma}
+   Jede nicht erweiterbare UM $I$ eines Graphen $G$ ist dominierend für $G$.
+  \end{lemma}
+  \begin{proof}
+   Angenommen, dass nicht, dann gäbe es ein $v\in V-I$, dass nicht adjazent zu Knoten aus $I$ ist. Dann wäre $I + v$ eine unabhängige Menge, Widerspruch zur Nichterweiterbarkeit.
+  \end{proof}
 
-  Ein brute-force-Algorithmus für das kleinste dominating set läuft in \(O^*(2^n)\) durch Ausprobieren aller Teilmengen von \(V\). Zur Verbesserung dieser Laufzeit betrachten wir nicht erweiterbare unabhängige Mengen (NEUM) und verwenden dynamische Progammierung. Wir beobachten, dass sich eine NEUM effizient ermitteln lässt und jede NEUM dominierend ist.
-
-  \paragraph{Idee.} Zunächst bestimmen wir ein NEUM \(I\). Falls dieses klein ist, können wir alle Knotenmengen \(D\) mit \(|D| \leq |I|\) ausprobieren. Falls \(I\) groß ist, wenden wir das folgende Verfahren an.
+  \paragraph{Idee.} Zunächst bestimmen wir ein nicht-erweiterbare UM \(I\) für $G$. Dann verfahren wir wie folgt:
+  \begin{enumerate}[i)]
+   \item Falls dieses ``genügend klein'' ($|I| \leq\alpha \cdot n$) ist, können wir alle Knotenmengen \(D \subseteq V\) mit \(|D| \leq |I|\) ausprobieren. 
+   \item Falls \(I\) ``groß'' ($|I| > \alpha \cdot n$) ist, wenden wir das folgende Verfahren an, dass sich aus der Struktur von $G$ ergibt.
+  \end{enumerate}
 
   \begin{lemma}
-    Sei \(G\) ein Graph und \(I\) ein zugehöriges NEUM. Dann lässt sich eine kleinste dominierende Menge in \(O^*(2^{n-|I|})\) ermitteln.
+    Sei \(G\) ein Graph und \(I\) eine nicht-erweiterbare UM für $G$. Dann lässt sich eine kleinste dominierende Menge für $G$ in \(O^*(2^{n-|I|})\) ermitteln.
   \end{lemma}
 
   Beweis fehlt.
 
-%   \begin{proof}
-%     Wir definieren für Teilmengen \(D \subseteq V\) die Menge \(J_D \isDefinedBy D \cap J\) und \[\gamma \isDefinedBy \min \{ |D| : D \text{ dominiert } G \}.\] Dann ist die Menge \(I_D \isDefinedBy I \setminus N(J_D) = I \setminus N(J \cap D)\) in \(D\) enthalten, denn ein \(v \in I \setminus N(J \cap D)\) liegt in \(I\), jedoch nicht in der Nachbarschaft von \(J \cap D\). Damit wird \(v\) nicht von \(J \cap D\) dominiert. Da aber \(D\) eine dominierende Menge ist, muss \(v\) von \(I \cap D\) dominiert werden. .... \(v\) liegt nicht in \(N(J \cap D)\) und nicht in \(N(I \cap D)\), also \(v \notin N(D)\). Da \(v \notin N(D)\) und \(D\) dominierende Menge, gilt also \(v \in D\).
-%   \end{proof}  
+  \begin{proof}
+    Wir definieren uns eine Menge $J \isDefinedBy V -I$. Anstatt alle $2^n$ Teilmengen $D\subseteq V$ zu betrachten, probieren wir ``nur'' die $2^{|J|} = 2^{n-|I|}$ vielen Projektionen \(J_D \isDefinedBy D \cap J\) von allen möglichen $D\subseteq V$ in $J$. Wir bestimmen eine dominierende Menge $D$ mit den Eigenschaften: 
+    \begin{itemize}
+     \item $J_D = J \cap D$ und 
+     \item $|D| = \min \{|D'|: D' \text{ dominierende Menge}, J_D = J \cap D'\}$.
+    \end{itemize}
+    Für diese Menge gilt dann $D = J_D \cup I_D$, wobei \(I_D \isDefinedBy I \setminus N(J_D)\). Dann folgt daraus 
+    \[\gamma(G) = \min_{J_D \subseteq J} |D|\text{.}\]
+    Es bleibt die Frage, wie man von $J_D$ auf $D$ kommt. Es gilt, dass $I_D \subseteq D$, da $I_D$ von keinem Knoten aus $I - I_D$ und $J$ dominiert werden kann. Die einzigen von $I_D \cup J_D$ noch nicht dominierten Knoten sind die Knoten:
+    \[J_x \isDefinedBy J - (N[J_D]\cup N(I_D))\text{.}\]
+    Um $D$ zu ermitteln, müssen wir daher ``nur'' die kleine Menge $D_{J_x} \subseteq I - I_x$ finden, die $J_x$ dominiert. Dann ist $D= J_D \cup I_D \cup D_{J_x}$.
 
-  \marginpar{15.5.12}
   
+    %Wir definieren für Teilmengen \(D \subseteq V\) die Menge  und 
+    %\[\gamma \isDefinedBy \min \{ |D| : D \text{ dominiert } G \}.\] 
+    %Dann ist die Menge  in \(D\) enthalten, denn ein \(v \in I \setminus N(J \cap D)\) liegt in \(I\), jedoch nicht in der Nachbarschaft von \(J \cap D\). Damit wird \(v\) nicht von \(J \cap D\) dominiert. Da aber \(D\) eine dominierende Menge ist, muss \(v\) von \(I \cap D\) dominiert werden. .... \(v\) liegt nicht in \(N(J \cap D)\) und nicht in \(N(I \cap D)\), also \(v \notin N(D)\). Da \(v \notin N(D)\) und \(D\) dominierende Menge, gilt also \(v \in D\).
+  \end{proof}  
+
   \begin{lemma}
     Sei \(\alpha \leq 1/2\). Dann gilt \[ \sum_{i=0}^{\alpha \cdot n} \binom{n}{i} = O^*( 2^{h(\alpha) \cdot n} ), \] wobei \(h(\alpha) = - \alpha \log_2 \alpha - (1-\alpha) \log_2(1 - \alpha)\).
   \end{lemma}
@@ -64,6 +108,5 @@
   \end{proof}
   
   Der schnellste derzeit bekannte Algorithmus für dieses Problem benötigt ca. \(O(1,5^n)\) und stammt aus 2010.
-
-
-
+\end{section}
+\end{chapter}
