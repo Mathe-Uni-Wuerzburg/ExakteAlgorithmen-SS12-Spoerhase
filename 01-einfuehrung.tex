@@ -54,6 +54,8 @@
   
   \begin{definition}[$O^*$-Notation]
    \[f(n) = O^*(g(n)) \Leftrightarrow f(n) = O(g(n)\cdot poly(n))\]
+   Mathematische Definition aus der Übung:
+   \[f(n) \in O^*(g)) \Leftrightarrow  \exists c,d,n_o \in \mathbb{N}: \forall n \geq n_0: 0 \leq f(n) \leq c\cdot n^d\cdot g(n)\]
    z.B: $O(1,498^n\cdot n^{100}) \subsetneq O(1,499^n)$
   \end{definition}
 
@@ -331,7 +333,7 @@
 	\Return $k$-SAT2($F[t_i]$)
       }
     }
-    \Return \(k\)-SAT1(\(F[t_1])\)) \(\vee\) \(k\)-SAT1(\(F[t_2])\)) \(\vee\) ... \(\vee\) \(k\)-SAT1(\(F[t_q])\))\;
+    \Return \(k\)-SAT2(\(F[t_1])\)) \(\vee\) \(k\)-SAT2(\(F[t_2])\)) \(\vee\) ... \(\vee\) \(k\)-SAT2(\(F[t_q])\))\;
   \end{algorithm}
   \paragraph{Behauptung.} Der Algorithmus hat eine Laufzeit von $O^*(\alpha_k^n)$, wobei $\alpha_k = \beta_{k-1}$.
   \paragraph{Beobachtun.} Sei $v$ ein Knoten im Suchbaum, nicht die Wurzel. Wenn $v$ ein $k$-Branching ist, dann ist sein Vater ein Reduce-Knoten. (Immer, wenn gebranched wird, enthält Formel $F[t_i]$ mindestens eine Klausel der Länge $\leq k-1$.)
