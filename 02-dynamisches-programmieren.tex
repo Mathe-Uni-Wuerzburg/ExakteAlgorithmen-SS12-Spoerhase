@@ -41,6 +41,7 @@
   \end{enumerate}
 
   \begin{lemma}
+  \label{domSet}
     Sei \(G\) ein Graph und \(I\) eine nicht-erweiterbare UM für $G$. Dann lässt sich eine kleinste dominierende Menge für $G$ in \(O^*(2^{n-|I|})\) ermitteln.
   \end{lemma}
 
@@ -55,26 +56,43 @@
     Für diese Menge gilt dann $D = J_D \cup I_D$, wobei \(I_D \isDefinedBy I \setminus N(J_D)\). Dann folgt daraus 
     \[\gamma(G) = \min_{J_D \subseteq J} |D|\text{.}\]
     Es bleibt die Frage, wie man von $J_D$ auf $D$ kommt. Es gilt, dass $I_D \subseteq D$, da $I_D$ von keinem Knoten aus $I - I_D$ und $J$ dominiert werden kann. Die einzigen von $I_D \cup J_D$ noch nicht dominierten Knoten sind die Knoten:
-    \[J_x \isDefinedBy J - (N[J_D]\cup N(I_D))\text{.}\]
-    Um $D$ zu ermitteln, müssen wir daher ``nur'' die kleine Menge $D_{J_x} \subseteq I - I_x$ finden, die $J_x$ dominiert. Dann ist $D= J_D \cup I_D \cup D_{J_x}$.
+    \[J_X \isDefinedBy J - (N[J_D]\cup N(I_D))\text{.}\]
+    Um $D$ zu ermitteln, müssen wir daher ``nur'' die kleine Menge $D_{J_X} \subseteq I - I_X$ finden, die $J_X$ dominiert. Dann ist $D= J_D \cup I_D \cup D_{J_X}$.
 
-  
-    %Wir definieren für Teilmengen \(D \subseteq V\) die Menge  und 
-    %\[\gamma \isDefinedBy \min \{ |D| : D \text{ dominiert } G \}.\] 
-    %Dann ist die Menge  in \(D\) enthalten, denn ein \(v \in I \setminus N(J \cap D)\) liegt in \(I\), jedoch nicht in der Nachbarschaft von \(J \cap D\). Damit wird \(v\) nicht von \(J \cap D\) dominiert. Da aber \(D\) eine dominierende Menge ist, muss \(v\) von \(I \cap D\) dominiert werden. .... \(v\) liegt nicht in \(N(J \cap D)\) und nicht in \(N(I \cap D)\), also \(v \notin N(D)\). Da \(v \notin N(D)\) und \(D\) dominierende Menge, gilt also \(v \in D\).
+    Der naive Ansatz wäre, für jedes $J_X$ das entsprechende $D_{J_X}$ seperat zu bestimmen. Dies ist jedoch zu langsam. Cleverer bestimmt man simultan für jedes $X \subseteq J$ das kleinste $D_X \subseteq I$, dass $X$ dominiert. Dazu betrachten wir folgendes dynamisches Programm:
+    
+    \underline{Dynamisches Programm:}\\
+    Sei $I = \{v_1,\dots,v_k\}$. Dann sei $D_{X,i}$ die kleinste Teilmenge von $\{v_1,\dots,v_k\}$, die $X$ dominiert. $\Rightarrow$ $D_X = D_{X,R}$.\\
+    \begin{itemize}
+     \item $i = 0$:\\
+      $D_{X,0} = \begin{cases}
+		  \emptyset & \text{ falls } X = \emptyset\\
+		  \{v_1,\dots,v_k\} & \text{ falls } X \neq \emptyset
+               \end{cases}$
+     \item $i \geq 1$:\\
+     $D_{X,i} = $ die kleinere der Mengen $D_{X,i-1}$ und $D_{X-N(v_i),i-1} \cup \{v_i\}$
+    \end{itemize}
+    Laufeit des dyn. Programms: $O(2^{|J|\cdot n^2}) = O^*(2^{|J|})$
+    
+    \underline{Gesamte Laufzeit des Algorithmus:}\\
+    \begin{itemize}
+     \item dyn. Programm: $O^*(2^{|J|})$
+     \item ermittle für jedes der $2^{|J|}$-vielen $J_D \subseteq J$ die Menge $I_D,J_X,D_{J_X}$, wobei sich die dominierende Menge durch $D= I_D \cup J_D \cup D_{J_X}$ ergibt. $\Rightarrow O^*(2^{|J|})$
+    \end{itemize}
+    $\Rightarrow O^*(2^{|J|})= O^*(2^{n-|I|})$
   \end{proof}  
-
-  \begin{lemma}
-    Sei \(\alpha \leq 1/2\). Dann gilt \[ \sum_{i=0}^{\alpha \cdot n} \binom{n}{i} = O^*( 2^{h(\alpha) \cdot n} ), \] wobei \(h(\alpha) = - \alpha \log_2 \alpha - (1-\alpha) \log_2(1 - \alpha)\).
+  
+  \begin{lemma}[Hilfslemma]
+    Sei $\alpha \leq \frac{1}{2}$, dann ist
+    \[\sum_{k=0}^{\alpha n} \binom{n}{k} = O^*(2^{h(\alpha) \cdot n})\text{,}\]
+    wobei $h(\alpha) = -\alpha\log_2 \alpha - (1-\alpha) \log_2 (1-\alpha)$.
+      \begin{figure}[h]
+	\centering
+	\includegraphics[width=.25\textwidth]{./Bilder/b01.jpg}
+	% b01.jpg: 495x434 pixel, 72dpi, 17.46x15.31 cm, bb=0 0 495 434
+	\caption{Graph des Binomialkoeffizienten}
+      \end{figure}
   \end{lemma}
-  
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=.25\textwidth]{./Bilder/b01.jpg}
-    % b01.jpg: 495x434 pixel, 72dpi, 17.46x15.31 cm, bb=0 0 495 434
-    \caption{Graph des Binomialkoeffizienten}
-  \end{figure}
-  
   \begin{proof}
     Es ist \( \sum_{i=0}^{\alpha n} \leq n \binom{n}{\alpha n} = O^*( \binom{n}{\alpha n} ) \), denn die Binomialkoeffizienten \( \binom{a}{b} \) steigen für \(b \leq n/2\) monoton an. Per Definition gilt 
     \[ \binom{n}{k} = \frac{n!}{k! (n-k)!}. \]
@@ -85,15 +103,14 @@
     \end{eqnarray*}
     woraus die Behauptung folgt.
   \end{proof}
-  
+
   \begin{theorem}
     Eine kleinste dominierende Menge lässt sich in \(O(1{,}7088^n)\) ermitteln.
   \end{theorem}
-  
   \begin{proof}
     Zunächst bestimmen wir eine nicht-erweiterbare unabhänge Menge \(I\). 
     Falls \(|I| \leq \alpha n\), testen wir in \(O^*(2^{h(\alpha) n})\) alle Teilmengen \(D \subseteq V\) mit \(|D| \leq |I|\).
-    Falls \(|I| > \alpha n\), wende Satz \ref{satz??} an und berechne kleinste dominierende Menge in \(O^*(2^{(1-\alpha)n})\). % Satz in dem O*(2^(n-|I|)) bewiesen wurde
+    Falls \(|I| > \alpha n\), wende Lemma \ref{domSet} an und berechne kleinste dominierende Menge in \(O^*(2^{(1-\alpha)n})\). % Satz in dem O*(2^(n-|I|)) bewiesen wurde
     
     \begin{figure}[h]
       \centering

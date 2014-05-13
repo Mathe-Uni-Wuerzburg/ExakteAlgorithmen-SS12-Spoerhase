@@ -10,7 +10,7 @@
   \[
     | \overline{A \cup B \cup C} | = |S| - ( |A| + |B| + |C| ) + ( |A \cap B| + |A \cap C| + |B \cap C| ) - ( | A \cap B \cap C | ).
   \]
-  Sind \(N\) Objekte und eine Menge \(P = \{ P_1, ... P_n \}\) von Eigenschaften gegeben, bezeichnen wir für jedes \(S \subseteq P\) mit \(N(S)\) die Anzahl der Objekte, die (mindestens) die Eigenschaften in \(S\) erfüllen. Mit \(N(0)\) bezeichnen wir die Anzahl der Objekte, die keine der Eigenschaften erfüllen. Wir können oben skizzierte Formel dann verallgemeinern, es ergibt sich
+  Sind \(N\) Objekte und eine Menge \(P = \{ P_1,\dots,P_n \}\) von Eigenschaften gegeben, bezeichnen wir für jedes \(S \subseteq P\) mit \(N(S)\) die Anzahl der Objekte, die (mindestens) die Eigenschaften in \(S\) erfüllen. Mit \(N(0)\) bezeichnen wir die Anzahl der Objekte, die keine der Eigenschaften erfüllen. Wir können oben skizzierte Formel dann verallgemeinern, es ergibt sich
   
   \begin{theorem} \label{satzInklSumme}
     \(N(0) = \sum_{S \subseteq P} (-1)^{|S|} N(S) = N(\emptyset) + \sum_i N(P_i) + \sum_{i \leq j} N(P_i, P_j) + ...\).
@@ -19,8 +19,6 @@
   \begin{proof}
     Elemente des Universums, die keine der Eigenschaften besitzen, werden auf beiden Seiten der Gleichung einmal gezählt. Betrachte nun die Elemente, die genau die Eigenschaften \(S = \{ P_{i_1}, ..., P_{i_s}\}\), \(|S| = s\). Diese werden genau in den \(N(S')\) mit \(S' \subseteq S\) gezählt. Daraus folgt, dass diese Objekte zur rechten Seite der Gleichung jeweils \( \sum_{S' \subseteq S} (-1)^{|S'|} = \sum_{i=0}^s \binom{s}{i} \cdot (-1)^i = (-1 + 1)^s = 0\) beitragen. Objekte, die mindestens eine Eigenschaft besitzen, werden also auf der rechten Seite nicht gezählt.
   \end{proof}
-  
-  \marginpar{22.5.12}
   
   \begin{corollary}
     \(N(P) = \sum_{S \subseteq P} (-1)^{|S|}\overline{N}(S)\), wobei \(\overline{N}(S)\) die Anzahl der Objekte mit keiner der Eigenschaften in \(S\) ist.
