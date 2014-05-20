@@ -37,7 +37,7 @@
       Alg1: &$O(n\cdot 1,5^n)$ &$O^*(1,5^n)$\\ 
       Alg2: &$O(n^2\cdot 1,4^n)$ &$O^*(1,4^n)$\\
    \end{tabular}
-   \item Wozu solche Ergebnisse? \\
+   \item Wozu solche Ergebnisse?
    \begin{align*}
     a^{n_0'} &= c\cdot a^{n_0}\\
     n_0' \cdot \log a &= \log c + n_0 \log a\\
@@ -89,7 +89,7 @@
     \For{\(j = 2\) bis \(n\)}{
       \For{\(S \subseteq \{ c_2,....,c_n \}\) mit \(|S| = j\)}{
         \For{\(c_i \in S\)}{
-          \(\displaystyle \OPT[S,c_i] \leftarrow \min_{c_j \in S \setminus \{c_i\}} \{ \OPT[S \setminus \{ c_i \}, c_j ] + d(c_j,c_i)\}\)
+          \(\OPT[S,c_i] \leftarrow \min_{c_j \in S \setminus \{c_i\}} \{ \OPT[S \setminus \{ c_i \}, c_j ] + d(c_j,c_i)\}\)
         }
       }
     }
@@ -136,7 +136,7 @@
   Sei $l$ ein Blatt im Suchbaum, dann sein $L(l)$ die Länge des Pfades von der Wurzel zu $l$. Dann gilt für die Laufzeit des Algorithmus:
   \[ O^*(\sharp\text{Knoten}) \subseteq O^*(\sum_{l \text{ Blatt}} L(l)) \subseteq O^*(\sum_{l \text{ Blatt}} n) = O^*(\sharp\text{Knoten})\]
   
-  Für die Anzahl der Knoten im Baum gilt folgende Rekursionsgleichung:\\
+  Für die Anzahl der Knoten im Baum gilt folgende Rekursionsgleichung:
   \begin{align*}
   B(n) &\leq \sum_{y \in N[v]} B(n-(d(y)+1))\\
   &\leq \sum_{y \in N[v]} B(n-(d(v)+1))\\
@@ -144,7 +144,7 @@
   &= s \cdot B (n-s)
   \end{align*}
   
-  Auflösen der Rekursionsgleichung durch Beweis per Induktion:\\
+  Auflösen der Rekursionsgleichung durch Beweis per Induktion:
   \begin{align*}
   B(0) &= 1\\
   \text{Behauptung: } B(n) &= 3^{\frac{n}{3}}\\

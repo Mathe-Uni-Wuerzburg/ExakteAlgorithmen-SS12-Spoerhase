@@ -28,17 +28,21 @@
     Es sei \(P'_i\) die Eigenschaft, dass ein Objekt die Eigenschaft \(P_i\) nicht besitzt. Es ist dann \(N'(0) = N(P)\) und \(N'(P'_1, ... P'_k) = \overline{N}(P_1,...,P_k)\). Es folgt die Behauptung.
   \end{proof}
   
-\section{Hamiltonpfad}
-  Wir betrachten nun das gerichtete Hamiltonpfadproblem. Gegeben sei ein gerichteter Graph \(G = (V,E)\) sowie Knoten \(s,t \in V\). Das gerichtete Hamiltonpfadproblem bezeichnet das Problem, ob ein einfacher \(s\)-\(t\)-Pfad existiert, der alle Knoten in \(V\) besucht. Dieses Problem ist NP-schwer. Brute force benötigt \(O^*(n!)\) Zeit. Wir geben einen Algorithmus an, der \(O^*(2^n)\) Zeit und polynomiellen Speicherplatz benötigt.
+\begin{section}{Gerichteter Hamiltonpfad}
+  Wir betrachten nun das gerichtete Hamiltonpfadproblem. Gegeben sei ein gerichteter Graph \(G = (V,E)\) sowie Knoten \(s,t \in V\). Das gerichtete Hamiltonpfadproblem bezeichnet das Problem, ob ein einfacher \(s\)-\(t\)-Pfad existiert, der alle Knoten in \(V\) besucht. Dieses Problem ist NP-schwer. Brute force benötigt \(O^*(n^n)\) Zeit. Wir geben einen Algorithmus an, der \(O^*(2^n)\) Zeit und polynomiellen Speicherplatz benötigt.
+  
+  Möglich wäre eine Redukution auf TSP -- verbinde $t$ und $s$ durch eine Kante, suche eine kürzeste Rundtour, wobei zum vollständigen Graphen fehlende Kanten mit sehr hohem Gewicht eingefügt werden. Dies läuft zwar in $O^*(2^n)$ Zeit, braucht aber ebenfalls $O^*(2^n)$ Platz.
   
   \begin{theorem}
     Die Anzahl der \(s\)-\(t\)-Hamiltonpfade kann in \(O^*(2^n)\) Zeit und mit polynomiellen Speicherplatzverbrauch ermittelt werden.
   \end{theorem}
   
   \begin{proof}
-    Wir verwenden das Inklusion-Exklusion-Prinzip. Als Objekte sehen wir alle \(s\)-\(t\)-Pfade der Länge \(n - 1\) an -- auch solche, die nicht einfach sind. Die Eigenschaften \(v \in V\) sind definiert als "`Pfad besucht den Knoten \(v\)"'. Also ergibt sich \(N(V)\) als die Anzahl der \(s\)-\(t\)-Hamiltonpfade. Zur Berechnung von \(N(V)\) bestimmen wir zunächst für \(W \subseteq V\) jeweils \(\overline{N}(W)\), die Anzahl der \(s\)-\(t\)-Pfade der Länge \(n - 1\), die \(W\) vermeiden. 
+    Wir verwenden das Inklusion-Exklusion-Prinzip. Als Objekte sehen wir alle \(s\)-\(t\)-Pfade der Länge \(n - 1\) an -- auch solche, die nicht einfach sind. Sei $V' \defNotion V \setminus \{s,t\}$. Die Eigenschaften \(v \in V'\) sind definiert als "`Pfad besucht den Knoten \(v\)"'. Also ergibt sich \(N(V')\) als die Anzahl der \(s\)-\(t\)-Hamiltonpfade. Zur Berechnung von \(N(V')\) bestimmen wir zunächst für \(W \subseteq V'\) jeweils \(\overline{N}(W)\), die Anzahl der \(s\)-\(t\)-Pfade der Länge \(n - 1\), die \(W\) vermeiden. 
     
-    Dies erreichen wir durch dynamische Programmierung. Das Programm berechnet für ein festes \(W \subseteq V \setminus \{s,t\}\), ein \(k = 0,...,n-1\) und ein \(u \in V \setminus W\) die Anzahl der \(s\)-\(u\)-Pfade der Länge \(k\), die \(W\) vermeiden. Diese Zahl nennen wir \(\overline{N}(W,u,k)\). Es folgt \(\overline{N}(W,t,n-1) = \overline{N}(w)\). Die Berechnung erfolgt für \(k = 0\) durch
+    \[N(V') = \sum_{W \subseteq V'} (-1)^{|W|} \overline{N}(W)\]
+    
+    Dies erreichen wir durch dynamische Programmierung. Das Programm berechnet für ein festes \(W \subseteq V'\), ein \(k = 0,...,n-1\) und ein \(u \in V \setminus W\) die Anzahl der \(s\)-\(u\)-Pfade der Länge \(k\), die \(W\) vermeiden. Diese Zahl nennen wir \(\overline{N}(W,u,k)\). Es folgt \(\overline{N}(W,t,n-1) = \overline{N}(W)\). Die Berechnung erfolgt für \(k = 0\) durch
     \[
       \overline{N}(W,u,0) = 
       \begin{cases}
@@ -50,20 +54,27 @@
     \[
       \overline{N}(W,u,k) = \sum_{vu \in E, v \notin W} \overline{N}(W,v,k-1)
     \]
-    Die Laufzeit des dynamischen Programms für ein festes \(W\) ist \( O(n \cdot m) \) mit \(m = |E|\). Durch Wiederverwendung von Speicherplatz erreicht man einen Speicherverbrauch von \( O(n \cdot \log 2^m ) = O(n \cdot m) \).
+    Die Laufzeit des dynamischen Programms für ein festes \(W\) ist \( O(n \cdot m) \) mit \(m = |E|\). Für den Speicher gilt:
+    \[\overline{N}(\cdot,\cdot,\cdot) \leq 2^m \Rightarrow |\overline{N}(\cdot,\cdot,\cdot)| \leq m \text{ bits,}\]
+    also insgesamt $O(n\cdot m)$.
     
     Zur Berechnung des Endergebnisses iterieren wir über alle \(W \subseteq V \setminus \{s,t\}\) und berechnen jeweils \( \overline{N}(w) \) mit dem oben angegebenen dynamischen Programm. Wir addieren den Wert des Ausdrucks \( (-1)^{|W|} \cdot \overline{N}(w) \) und erhalten \(N(V)\) als Wert dieser Summe. Die Gesamtlaufzeit ergibt sich damit als \(O(m \cdot n \cdot 2^n)\), der Gesamtspeicherbedarf als \(O(m \cdot n)\), da der Speicher wiederverwendet werden kann.
   \end{proof}
+\end{section}
   
-\section{Graphfärbung}
+\begin{section}{Graphfärbung}
   Wir betrachten nun das Problem der Graph-Färbung. Als Eingabe sei ein Graph \(G = (V,E)\) gegeben. Eine \defNotion{zulässige Färbung} weißt jedem Knoten so einer Farbe zu, dass keine zwei benachbarten Knoten die selbe Farbe haben. Gesucht ist die minimale Anzahl an Farben, mit denen dies möglich ist. Brute force benötigt die Zeit \( O^*(n^n) \). Wir geben einen Algorithmus an, der \(O^*(2^n)\) Zeit und Speicherplatz benötigt.
   
-  Wir nennen die Menge aller Knoten einer bestimmten Farbe eine \defNotion{Farbklasse}. Für korrekte Färbungen ist eine Farbklasse eine unabhängige Knotenmenge, daher können wir das Graphfärbungsproblem auch als Problem, die kleine Anzahl an unabhängigen Knotenmengen \(I_1,...,I_k\), die \(V\) partitionieren, formulieren. Dies ist verwand zum Set-Cover-Problem \( (\mathcal{I}, V) \), wobei \(\mathcal{I}\) die Menge aller unabhängigen Mengen ist. Verallgemeinert betrachten wir daher Set-Cover-Instanzen \( (S,U) \), bei denen \(U\) explizit gegeben ist und \(S\) in \(O^*(2^n)\) mit \(n = |U|\) aufgezählt werden kann. 
+  Wir nennen die Menge aller Knoten einer bestimmten Farbe eine \defNotion{Farbklasse}. Für korrekte Färbungen ist eine Farbklasse eine unabhängige Knotenmenge, daher können wir das Graphfärbungsproblem auch als Problem, die kleine Anzahl an unabhängigen Knotenmengen \(I_1,...,I_k\), die \(V\) partitionieren, formulieren. Dies ist verwand zum Set-Cover-Problem $(V, \mathcal{I})$, wobei \(\mathcal{I}\) die Menge aller unabhängigen Mengen in $G$ ist. Verallgemeinert betrachten wir daher Set-Cover-Instanzen $(U,S)$ (siehe Approximationsalgorithmen), bei denen $U$ explizit gegeben ist und $S$ in $O^*(2^{|U|})$ aufgezählt werden kann. 
   
-  Wir nennen ein \(k\)-Tupel \( (S_1, ..., S_k) \in S^k\) ein \defNotion{geordnetes \(k\)-Cover}, falls \( \bigcup_{i=1}^k S_i = U \) und geben einen Algorithmus an, der die Anzahl der geordnetes \(k\)-Cover ermittelt. Für \(W \subseteq U\) sei \(S[W]\) definiert als \( \{ S_i \in S : S_i \cap W = \emptyset \} \) sowie \(s[W] = |S[W]|\).
+  Wir nennen ein $S'$ ein \defNotion{$k$-Cover}, wenn $S' \subseteq S$, $\bigcup S' = U$ und $|S'| = k$. Wir entwerfen einen Algorithmus, der die Anzahl $c_k$ der \underline{geordneten $k$-Cover} $(S_1,\dots,S_k)$, $S_i \in S$, $\bigcup_{i=1}^k S_i = U$ ermittelt.
+  
+  AKTUELL BIS HIER
+  
+  \(W \subseteq U\) sei \(S[W]\) definiert als \( \{ S_i \in S : S_i \cap W = \emptyset \} \) sowie \(s[W] = |S[W]|\).
   
   \begin{lemma}
-   Die Anzahl der geordneten \(k\)-Cover beträgt \(c_k = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k\).
+   Die Anzahl der geordneten $k$-Cover beträgt \(c_k = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k\).
   \end{lemma}
 
   \marginpar{5.6.12}
@@ -98,13 +109,4 @@
     \]
     Im Fall \(u_i \in W\) ändert sich durch den Ausschluss von \(W\) in der Definition von \(g_i\) nichts an der Bedingung, daher bleibt die Anzahl gleich. Im anderen Fall können zwei Fälle eintreten, deren Möglichkeiten addiert werden. \(g_i(W \cup \{ u_i \})\) erfasst die Elemente, die \(u_i\) vermeiden, während \(g_i(W)\) die Möglichkeiten enthält, die \(u_i\) enthalten. Für jede Menge \(W \subseteq S\) wird der Ausdruck \(g_i(W)\) \(n\)-mal ausgewertet, daher beträgt die Laufzeit \(O^*(2^n)\). Der Speicherverbrauch liegt bei \(O(2^n)\), wenn man zu jeder Zeit immer nur die vorhergehende Zeile in der dynamischen Tabelle speichert. Somit kann die Formel mit Hilfe von diesem Algorithmus in \(O(2^n)\) Speicher und Zeit ausgewertet werden.
   \end{proof}
-
-
-
-
-
-
-
-
-
-
+\end{section}
