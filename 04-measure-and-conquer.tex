@@ -1,7 +1,16 @@
 \chapter{Measure \& Conquer}
 
 \section{Maximal Independent Set}
-  Measure and Conquer bezeichnet ein Verfahren, um Rekursonsgleichungen wie beispielsweise \(T(n) \leq T(n-1) + T(n-5)\) zu lösen. Ein Algorithmus für unabhängige Mengen ist
+  Dabei handelt es sich um eine Methode, um die Laufzeit von Branching-Algorithmen zu analysieren. Bisher war das Maß für den Fortschritt die Eingabegröße (Anzahl der Knoten, Anzahl der Elemente, etc.). Jetzt erhalten wir durch ``beliebige'' Maße mehr Wahlfreiheit und erreichen so bessere Schranken für die Laufzeit. Viele der heute schnellsten Algorithmen sind Branching-Algorithmen, die mit Measure \& Conquer analysiert wurden. 
+  
+  Die Anforderungen an das Maß lauten wie folgt:
+  \begin{itemize}
+   \item Das Maß ist nach Problemgrößenreduktion durch das Branching kleiner als vorher.
+   \item Das Maß ist nicht negativ.
+   \item Das Maß ist von oben durch eine Funktion der Problemgröße beschränkt. (Rückführung in Laufzeitschranke über $n$.)
+  \end{itemize}
+
+  
 
   \begin{algorithm}[H]
     \caption{Algorithmus zur Berechnung der größten Anzahl unabhängiger Mengen}
@@ -11,18 +20,21 @@
     \KwResult{Größte Anzahl von unabhängigen Mengen}
 
     \uIf{ex. \(v\) mit \(d(v) =0\)}{
-      \Return 1 + MIS(\(G-v\))
+      \Return 1 + MIS(\(G-v\)) (1)
     }\uElseIf{ex. \(v\) mit \(d(v) =1\)}{
-      \Return 1 + MIS(\(G-N[v]\))
+      \Return 1 + MIS(\(G-N[v]\)) (2)
     }\uElseIf{ \(\Delta(G) \geq 3\) } {
       wähle \(v\) mit \(d(v) \geq 3\) \\
-      \Return \(\max \{ 1 + \text{MIS}(G - N[v]), \text{MIS}(G-v) \}\) 
+      \Return \(\max \{ 1 + \text{MIS}(G - N[v]), \text{MIS}(G-v) \}\) (3)
     }\ElseIf{ \(\Delta(G) \leq 2\) } {
-      löse diesen Spezialfall effizient
+      löse diesen Spezialfall effizient (4)
     }
   \end{algorithm}
 
-  In Fall 3 handelt es sich um Branching, die Laufzeit wird hier durch die Rekursonsgleichung \(T(n) \leq T(n-1) + T(n-4)\) beschrieben. Die Standardanalyse liefert eine Abschätzung von \(O(1{,}3803^n)\). Diese Analyse kann durch die Methode Measure \& Conquer verbessert werden.
+  Nur in Fall (3) handelt es sich um Branching mit Branching-Vektor $(1,d(v) +1) \vartriangleright (1,4)$. Die Laufzeit ist hier also $O^*(\tau(1,4)^n) = O^*(1{,}3803^n)$. Diese Analyse kann durch die Methode Measure \& Conquer verbessert werden: Nur Knoten mit $d(v) \geq 3$ führen zum Branching. Der Ansatz für unser Maß lautet also, nur die Konten $k_1(G) = n_{\geq 3}$ -- also nur die Knoten mit Grad größer-gleich 3 -- zu zählen. Der Branching-Vektor ist also $(1,1)$, daraus ergibt sich im Worst-Case eine Laufzeit von $O^*(2^n)$. 
+  
+  AKTUELL BIS HIER!
+  
 
 \section{Dominating Set}
   Wir betrachten nun einen Algorithmus für Dominating Set, der bei konventioneller Analyse Laufzeit \(O(1{,}9052^n)\), bei Analyse mit Measure \& Conquer jedoch \(O(1{,}5259^n)\) ergibt. Dazu modellieren wir Dominating Set als Set Cover-Instanz, wobei \(U = V\) und \(S = \{ N[v] : v \in V \}\) ist. Die Größe dieser Set Cover-Instanz ist dann \(|U| + |S| = n + n = 2n\). Wir entwickeln daher einen Algorithmus für Set Cover mit \(O^*(c^{|U|+|S|})\) und \(c \ll 2\).

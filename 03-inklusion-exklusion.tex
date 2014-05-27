@@ -7,9 +7,9 @@
   \end{figure}
   
   Gehe von einem Problem aus, bei es leicht ist zu zählen, welche Elemente aus dem Universum \(S\) die Eigenschaft \(A\) oder \(B\), \(A\) und \(B\), ... erfüllen; es aber schwer ist zu zählen, wie viele Elemente diese Eigenschaften nicht besitzen. Es ergibt sich jedoch der Zusammenhang
-  \[
-    | \overline{A \cup B \cup C} | = |S| - ( |A| + |B| + |C| ) + ( |A \cap B| + |A \cap C| + |B \cap C| ) - ( | A \cap B \cap C | ).
-  \]
+  
+  \[ | \overline{A \cup B \cup C} | = |S| - ( |A| + |B| + |C| ) + ( |A \cap B| + |A \cap C| + |B \cap C| ) - ( | A \cap B \cap C | ). \]
+  
   Sind \(N\) Objekte und eine Menge \(P = \{ P_1,\dots,P_n \}\) von Eigenschaften gegeben, bezeichnen wir für jedes \(S \subseteq P\) mit \(N(S)\) die Anzahl der Objekte, die (mindestens) die Eigenschaften in \(S\) erfüllen. Mit \(N(0)\) bezeichnen wir die Anzahl der Objekte, die keine der Eigenschaften erfüllen. Wir können oben skizzierte Formel dann verallgemeinern, es ergibt sich
   
   \begin{theorem} \label{satzInklSumme}
@@ -69,22 +69,19 @@
   
   Wir nennen ein $S'$ ein \defNotion{$k$-Cover}, wenn $S' \subseteq S$, $\bigcup S' = U$ und $|S'| = k$. Wir entwerfen einen Algorithmus, der die Anzahl $c_k$ der \underline{geordneten $k$-Cover} $(S_1,\dots,S_k)$, $S_i \in S$, $\bigcup_{i=1}^k S_i = U$ ermittelt.
   
-  AKTUELL BIS HIER
-  
   \(W \subseteq U\) sei \(S[W]\) definiert als \( \{ S_i \in S : S_i \cap W = \emptyset \} \) sowie \(s[W] = |S[W]|\).
   
   \begin{lemma}
-   Die Anzahl der geordneten $k$-Cover beträgt \(c_k = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k\).
+   Die Anzahl der geordneten $k$-Cover beträgt 
+   \[c_k = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k\text{.}\]
   \end{lemma}
 
-  \marginpar{5.6.12}
-  
   \begin{proof}
     Wir betrachten die \(k\)-Tupel \( (S_1, ..., S_k) \) als Objekte und für \(v \in U\) den Ausdruck \(v \in \bigcup_{i=1}^k S_i\) als Eigenschaft, und wenden darauf die Inklusions- / Exklusionsformel an. Die Eigenschaft \(v \in U\) für ein \(k\)-Tupel gilt also nicht, wenn \(v \notin \cup_{i=1}^k S_i\). Ist ein \(W \subseteq U\) gegeben, so gelten alle Eigenschaften aus \(W\) nicht, wenn für alle \(v \in W\) stets \(v \notin \bigcup_i S_i\) gilt. Anders formuliert, muss für alle \(i\) der Schnitt \(S_i \cap W = \emptyset\) sein. Da es genau \(s[W]\) Mengen gibt, die \(W\) vermeinden, gibt es \(s[W]^k\) Möglichkeiten, ein \(k\)-Tupel aus Mengen zu bilden, die \(W\) vermeiden. Es ist damit \( \overline{N}[W] = s[W]^k\). Satz \ref{satzInklSumme} liefert dann \[c_k = N[U] = \sum_{W \subseteq U} (-1)^{ |W| } s[W]^k\] als Anzahl der Tupel, für die alle Eigenschaften \(v \in U\) gelten. Dies ist die Anzahl der Tupel, in denen für jedes \(v \in U\) gilt dass \(v \in \bigcup_i S_i\) ist.
   \end{proof}
 
   \begin{theorem}
-    Die Anzahl \(c_k\) aller \(k\)-Cover kann in \(O^*(2^n)\) berechnet werden.
+    Die Anzahl \(c_k\) aller \(k\)-Cover kann in \(O^*(2^n) = O(2^n \cdot poly(n))\) berechnet werden. [vgl. 1.ÜB: $O(2^n \cdot poly(|S|,n))$]
   \end{theorem}
 
   \begin{proof}
@@ -95,18 +92,26 @@
     \[
        g_n(W) =
        \begin{cases}
-          1 & (U \setminus W \in S) \\
-          0 & (\text{sonst})
+          1 & \text{ falls }U \setminus W \in S \\
+          0 & \text{ sonst}
        \end{cases}
     \]
     berechnet. Für \(0 \leq i < n\) ist dann
     \[
       g_{i-1}(W) =
       \begin{cases}
-         g_i(W) & (u_i \in W), \\
-         g_i(W \cup \{ u_i \}) + g_i(W) & (u_i \notin W).
+         g_i(W) & \text{ falls }u_i \in W \\
+         g_i(W \cup \{ u_i \}) + g_i(W) & \text{ falls }u_i \notin W
       \end{cases}
     \]
     Im Fall \(u_i \in W\) ändert sich durch den Ausschluss von \(W\) in der Definition von \(g_i\) nichts an der Bedingung, daher bleibt die Anzahl gleich. Im anderen Fall können zwei Fälle eintreten, deren Möglichkeiten addiert werden. \(g_i(W \cup \{ u_i \})\) erfasst die Elemente, die \(u_i\) vermeiden, während \(g_i(W)\) die Möglichkeiten enthält, die \(u_i\) enthalten. Für jede Menge \(W \subseteq S\) wird der Ausdruck \(g_i(W)\) \(n\)-mal ausgewertet, daher beträgt die Laufzeit \(O^*(2^n)\). Der Speicherverbrauch liegt bei \(O(2^n)\), wenn man zu jeder Zeit immer nur die vorhergehende Zeile in der dynamischen Tabelle speichert. Somit kann die Formel mit Hilfe von diesem Algorithmus in \(O(2^n)\) Speicher und Zeit ausgewertet werden.
   \end{proof}
+  \begin{corollary}
+   Graph-coloring kann in $O^ *(2^n)$ Zeit gelöst werden.
+  \end{corollary}
+  \begin{proof}
+   Ermittle $c_k$ für alle $k = 1, \dots, n$ und bestimme das kleinste $k^*$, sodass $c_{k^*} > 0$. Verwende dazu die Instanz $(V,\mathcal{I})$.
+  \end{proof}
+
+
 \end{section}
