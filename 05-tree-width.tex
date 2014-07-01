@@ -1,8 +1,6 @@
 \chapter{Tree width}
 
 \section{Dynamisches Programm für Vertex Cover}
-  \marginpar{3.7.12}
-  
   Zunächst betrachten wir Vertex Cover auf Bäumen. Dazu berechnen wir, beginnend bei den Blättern, für jeden Teilbaum mit Wurzel \(v\) ein ein maximales Vertex Cover, in dem \(v\) enthalten ist, und ein Vertex Cover, in dem die Teilbaum-Wurzel \(v\) nicht enthalten ist. Wir speichern die Ergebnisse der Berechnung in den Tabellen \(IN(v)\) bzw. \(OUT(v)\) für Teilbäume mit Wurzel \(v\), in denen \(v\) enthalten bzw. nicht enthalten ist.
 
   Zur Berechnung von \(OUT(v)\) für einen beliebigen Knoten \(v\) berechnen wir (in binären Bäumen) \(IN(v_1) + IN(v_2)\) der beiden Kind-Knoten \(v_1\) und \(v_2\) von \(v\). Wir müssen \(v_1\) und \(v_2\) in das Vertex Cover aufnehmen, da die Kanten \((vv_1)\) und \((vv_2)\) gecovert werden müssen.
